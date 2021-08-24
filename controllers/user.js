@@ -16,6 +16,7 @@ exports.getUserById = (req,res,next,id)=>{
 }
 
 exports.getUser = (req,res) => {
+    // req.profile is populated using getUserById
     req.profile.salt = undefined;
     req.profile.encry_password = undefined;
     return res.json(req.profile);
