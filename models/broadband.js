@@ -18,9 +18,10 @@ const broadbandSchema = new mongoose.Schema({
         type : String,
         trim : true,
         required : true,
-        maxlength : 32
+        maxlength : 32,
+        enum : ["Prepaid","Postpaid"]
     },
-    validity :{
+    validity :{ ///must be in no of days
         type : Number,
         trim : true,
         required : true,
@@ -50,14 +51,16 @@ const broadbandSchema = new mongoose.Schema({
         required : true,
         maxlength : 32
     },
-    availability :[{
-        type : ObjectId,
-        ref : "BroadbandLocation"
-    }],
     planperks :[{
         type : ObjectId,
         ref : "Planperk"
-    }]
+    }],
+    installationcharges :{
+        type : Number,
+        trim : true,
+        required : true,
+        maxlength : 32
+    }
 },{timestamps :true})
 
 

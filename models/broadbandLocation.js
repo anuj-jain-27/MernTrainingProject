@@ -24,9 +24,13 @@ const broadbandSchema = new mongoose.Schema({
         type : Number,
         trim : true,
         required : true,
+        minlength : 4,
         maxlength : 10
-    }
-    
+    },
+    availableplans :[{
+        type : ObjectId,
+        ref : "broadband"
+    }]
 },{timestamps :true})
 
 module.exports = mongoose.model("BroadbandLocation",broadbandSchema);
