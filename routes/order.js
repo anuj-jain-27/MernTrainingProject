@@ -6,19 +6,20 @@ const {isAdmin,isAuthenticated,isSignedIn} = require("../controllers/auth")
 const {getUserById,pushOrderInPurchaseList} = require("../controllers/user")
 const {updateStockAndSold} = require("../controllers/product")
 const {getOrderById, createOrder,getAllOrders,updateStatus,getOrderStatus} = require("../controllers/order")
-
+const {getUserCardById} = require("../controllers/paymentcards")
 
 //params
 
 router.param("userId",getUserById)
 router.param("orderId",getOrderById)
+router.param("cardId",getUserCardById);
 
 
 
 // actual routes
 
 //CREATE 
-router.post("/order/create/:userId",isSignedIn,isAuthenticated,
+router.post("/order/create/:cardId/:userId",isSignedIn,isAuthenticated,
 pushOrderInPurchaseList,
 updateStockAndSold,
 createOrder)

@@ -55,6 +55,10 @@ const broadbandpayhisSchema = new mongoose.Schema({
     },
     usage :{
         type :String
+    },
+    cardId :{
+        type : ObjectId,
+        ref: "PaymentCard"
     }
 },{timestamps :true})
 

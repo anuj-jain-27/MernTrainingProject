@@ -11,7 +11,7 @@ router.param("categoryId",getCategoryById)
 
 
 
-router.post("/category/create/:userId",isSignedIn,isAuthenticated,isAdmin,createCategory)
+router.post("/category/create/:userId",isSignedIn,isAuthenticated,isAdmin,createCategory) //
 
 
 //READ

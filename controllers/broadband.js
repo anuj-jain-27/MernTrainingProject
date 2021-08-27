@@ -4,7 +4,23 @@ const BroadbandLocation = require("../models/broadbandLocation")
 
 
 //get
-exports.getBroadBandPlans = (req,res)=>{
+exports.getBroadbandById = (req,res,next,id)=>{
+    Broadband.findById(id).exec((err,plans)=>{
+        if(err || !plans){
+            return res.status(400).json({
+                error : "No Broadband Plan available"
+            })
+        }
+        req.broadband = plans
+        next()
+    })
+}
+
+exports.getBroadbandPlan = (req,res)=>{
+    return res.json(req.broadband);
+}
+
+exports.getAllBroadBandPlans = (req,res)=>{
     Broadband.find({}).exec((err,plans)=>{
         if(err || !plans){
             return res.status(400).json({
@@ -18,7 +34,7 @@ exports.getBroadBandPlans = (req,res)=>{
 //getByLocation
 exports.getBroadBandPlansByLocation = (req,res)=>{
     
-    BroadbandLocation.find({_id : req.body._id}).exec((err,plans)=>{
+    BroadbandLocation.find({_id : req.broadbandloc._id}).exec((err,plans)=>{
         if(err || !plans){
             return res.status(400).json({
                 error : "No Broadband Plan available"
@@ -52,7 +68,7 @@ exports.addBroadBand = (req,res)=>{
 //update
 exports.updateBroadbandPlan = (req,res)=>{
     Broadband.findOneAndUpdate(
-        {_id : req.body._id},
+        {_id : req.broadband._id},
         {$set : req.body},
         {new: true},
         (err,plan) =>{
@@ -69,7 +85,7 @@ exports.updateBroadbandPlan = (req,res)=>{
 
 //delete
 exports.removeplan = (req, res)=>{
-    var id = req.body._id;
+    var id = req.broadband._id;
     Broadband.findByIdAndRemove(
         id,
         (err,plan)=>{
@@ -79,7 +95,7 @@ exports.removeplan = (req, res)=>{
                 })
             }
             res.json({
-                message : 'Selected Plan ${plan.name} deleted successfully' 
+                message : `Selected product ${plan.name} deleted successfully` 
             })
         }
     )

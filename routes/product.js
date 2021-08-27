@@ -14,7 +14,7 @@ router.param("productId",getProductById);
 
 // Routes
 
-router.post("/product/create/:userId",isSignedIn,isAuthenticated,isAdmin,createProduct);
+router.post("/product/create/:userId",isSignedIn,isAuthenticated,isAdmin,createProduct); //,isSignedIn,isAuthenticated
 
 // READ
 

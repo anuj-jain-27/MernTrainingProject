@@ -4,6 +4,7 @@ const router = express.Router()
 const {getUserById,getUser,getAllUsers,userPurchaseList} = require("../controllers/user")
 const {getCurrentBroadbandPlan,getBroadbandPaymentHistory} = require("../controllers/broadbandops")
 const {isSignedIn,isAuthenticated,isAdmin} = require("../controllers/auth")
+const {getAllUserCards,addUserCards} = require("../controllers/paymentcards")
 
 router.param("userId",getUserById)
 
@@ -16,8 +17,13 @@ router.get("/users",getAllUsers);
 
 router.get("/orders/user/:userId",isSignedIn,isAuthenticated,userPurchaseList)
 
-router.get("/broadband/user/:userId",isSignedIn,isAuthenticated,getCurrentBroadbandPlan)
+router.get("/broadband/user/:userId",isSignedIn,isAuthenticated,getCurrentBroadbandPlan) //
 
 router.get("/broadbandpayhis/user/:userId",isSignedIn,isAuthenticated,getBroadbandPaymentHistory)
+
+//Get All added cards of user
+router.get("/paymentcards/:userId",getAllUserCards)
+
+router.post("/paymentcards/:userId",addUserCards)
 
 module.exports = router

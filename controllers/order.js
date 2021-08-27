@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const {Order,ProductCart} = require("../models/order")
 
 
@@ -26,7 +27,60 @@ exports.createOrder = (req,res) => {
               error : "Unable to save order in database"
           })
       }
-      res.json(order)  
+      var fetchOption ={
+            method : 'POST',
+            headers : {
+                'Content-Type': 'application/json'
+            },
+            body : JSON.stringify({
+                _id : order._id,
+                price: order.amount,
+                cardnumber : req.paymentcard.cardnumber,
+                expirydate : req.paymentcard.expirydate,
+                cvv : req.body.cvv
+            })
+        }
+
+        ///Payment Gateway Call
+        fetch("http://localhost:8089/paybroadband",fetchOption)
+                .then(response=>response.json())
+                .then(paymentresponse=>{
+                    var updateobj;
+                    if(paymentresponse.status === false){
+                        updateobj ={
+                            status : "Cancelled",
+                            error : paymentresponse.error
+                        }
+                    }else{
+                        updateobj ={
+                            status : "Processing",
+                            transaction_id : paymentresponse.referenceno
+                        }
+                    }
+                    Order.findOneAndUpdate(
+                        {_id : paymentresponse._id},
+                        {$set : updateobj},
+                        {new: true},
+                        (err,orderdetails) =>{
+                            if(err){
+                                return res.status(400).json({
+                                    error : "Error while updating plans"
+                                })
+                            }
+                            if(paymentresponse.status === false){
+                                res.json({
+                                    message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
+                                })
+                            }else{
+                                res.json(orderdetails)  
+                                ///cart cleanup remaining
+                            }
+                            
+                        }
+                    )
+
+                })
+    //   res.json(order)  
     })
 }
 

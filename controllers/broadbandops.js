@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const BroadbandPayHistory = require("../models/broadbandpayhistory")
 const BroadbandRequest = require("../models/broadbandbuyrequest")
 const Broadband = require("../models/broadband");
@@ -6,102 +7,189 @@ const Broadband = require("../models/broadband");
 exports.buynewbroadband = (req,res) =>{
     var amountcalc;
     //Amount Calculation
-    amountcalc = req.body.broadband.monthlyprice + req.body.broadband.installationcharges;
+    amountcalc = req.broadband.monthlyprice + req.broadband.installationcharges;
     
     var request = new BroadbandRequest({
-        "user" : req.body.user._id,
-        "broadband" : req.body.broadband._id,
+        "user" : req.profile._id,
+        "broadband" : req.broadband._id,
         "address" : req.body.address,
         "amount" : amountcalc,
-        "plantype" : req.body.broadband.plantype,
+        "plantype" : req.broadband.plantype,
         "dueamount" :0,
-        "planduration" : req.body.broadband.validity,
-        "plandata" : req.body.broadband.data
+        "planduration" : req.broadband.validity,
+        "plandata" : req.broadband.data,
+        "cardId" : req.paymentcard._id
     })
 
-    request.save((err,data)=>{
+    request.save((err,requestdata)=>{
         if(err){
             return res.status(404).json({
                 error : "Buy broadband request failed"
             })
         }
-        data.paymentlink = "https://paytm.com" //make it configurable
-        data.callbackUrl = "/broadbandpaymentres" /// frontend Route that will reroute to another function
-        res.json(data);
+        var fetchOption ={
+            method : 'POST',
+            headers : {
+                'Content-Type': 'application/json'
+            },
+            body : JSON.stringify({
+                _id : requestdata._id,
+                price: requestdata.amount,
+                cardnumber : req.paymentcard.cardnumber,
+                expirydate : req.paymentcard.expirydate,
+                cvv : req.body.cvv
+            })
+        }
+
+        ///Payment Gateway Call
+        fetch("http://localhost:8089/paybroadband",fetchOption)
+                .then(response=>response.json())
+                .then(paymentresponse=>{
+                    var updateobj;
+                    if(paymentresponse.status === false){
+                        updateobj = {
+                            status : "Failed",
+                            error : paymentresponse.error
+                        }
+                    }else{
+                        updateobj ={
+                            status : "Success",
+                            transactionrefno : paymentresponse.referenceno
+                        }
+                    }
+
+                    ////Update Status
+                    BroadbandRequest.findOneAndUpdate(
+                        {_id : requestdata._id},
+                        {$set : updateobj},
+                        {new: true},
+                        (err,paymentdet)=>{
+                            if(err){
+                                return res.status(404).json({
+                                    error : "Error Occured while saving data"
+                                })
+                            }
+                            if(paymentresponse.status === false){ /////failed request
+                                res.json({
+                                    message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
+                                })
+                            }else{ /////on success create broadband entry
+                                //Adding details in Payment History Data
+                                var objarr =[];
+                                var date = new Date(new Date().toDateString());
+                                //PostPaid Functionality Remaining
+                                var prepaidObj = new BroadbandPayHistory({
+                                    "userId" : paymentdet.user,
+                                    "productId" : paymentdet.broadband,
+                                    "plantype" : paymentdet.plantype,
+                                    "planfrom" : date,
+                                    "plantill" : new Date(date.getTime()+(parseInt(paymentdet.planduration)*24*60*60*1000)),
+                                    "referenceno" : paymentdet.transactionrefno,
+                                    "paymentstatus": "Paid",
+                                    "amount" : paymentdet.amount,
+                                    "status" : "active",
+                                    "isupgrade" : 0,
+                                    "cardId" : paymentdet.cardId,
+                                    "usage" :  paymentdet.plandata+"|"  ///75 total data  75|5 means 70GB Data remaining first day consumption 5
+                                })
+                                objarr.push(prepaidObj);
+                                
+                                objarr.forEach(element => {
+                                    element.save((err,result)=>{
+                                        if(err){
+                                            return res.status(404).json({
+                                                error : "User Paid for scheme, Some Error occured in backoffice"
+                                            })
+                                        }
+                                    })
+                                });
+                                res.json(paymentdet);
+                            }
+                        }
+                    )
+                })
+                .catch((err)=>{
+                    return res.status(404).json({
+                        error : "Error Occured while Connecting to Payment GAteway server"
+                    })
+                })
+        // res.json(data);
     })
 }
-
+/////////As We are making call from backend thats why commented
 //Payment Gateway returned result 
-exports.broadbandplandpayment =(req,res)=>{
-    if(req.body.paymentstatus === false){
-        BroadbandRequest.findOneAndUpdate(
-            {_id : req.body._id},
-            {$set : {
-                status : "Failed",
-                error : req.body.error
-            }},
-            {new: true},
-            (err,paymentdet)=>{
-                if(err){
-                    return res.status(404).json({
-                        error : "Payment failed"
-                    })
-                }
-                res.json({
-                    message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
-                })
-            }
-        )
-    }else{
-        BroadbandRequest.findOneAndUpdate(
-            {_id : req.body._id},
-            {$set : {
-                status : "Success",
-                transactionrefno : req.body.referenceno
-            }},
-            {new: true},
-            (err,paymentdet)=>{
-                if(err){
-                    return res.status(404).json({
-                        error : "Failed to stored payment result"
-                    })
-                }
+// exports.broadbandplandpayment =(req,res)=>{
+//     if(req.body.paymentstatus === false){
+//         BroadbandRequest.findOneAndUpdate(
+//             {_id : req.body._id},
+//             {$set : {
+//                 status : "Failed",
+//                 error : req.body.error
+//             }},
+//             {new: true},
+//             (err,paymentdet)=>{
+//                 if(err){
+//                     return res.status(404).json({
+//                         error : "Payment failed"
+//                     })
+//                 }
+
+//                 res.json({
+//                     message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
+//                 })
+//             }
+//         )
+//     }else{
+//         BroadbandRequest.findOneAndUpdate(
+//             {_id : req.body._id},
+//             {$set : {
+//                 status : "Success",
+//                 transactionrefno : req.body.referenceno
+//             }},
+//             {new: true},
+//             (err,paymentdet)=>{
+//                 if(err){
+//                     return res.status(404).json({
+//                         error : "Failed to stored payment result"
+//                     })
+//                 }
                 
-                //Adding details in Payment History Data
-                var objarr =[];
-                var date = new Date(new Date().toDateString());
-                //PostPaid Functionality Remaining
-                var prepaidObj = new BroadbandPayHistory({
-                    "userId" : paymentdet.user,
-                    "productId" : paymentdet.broadband,
-                    "plantype" : paymentdet.plantype,
-                    "planfrom" : date,
-                    "plantill" : new Date(date.getTime()+(parseInt(paymentdet.planduration)*24*60*60*1000)),
-                    "referenceno" : paymentdet.transactionrefno,
-                    "paymentstatus": "Paid",
-                    "amount" : paymentdet.amount,
-                    "status" : "active",
-                    "isupgrade" : 0,
-                    "usage" :  paymentdet.plandata+"|"  ///75 total data  75|5 means 70GB Data remaining first day consumption 5
-                })
-                objarr.push(prepaidObj);
+//                 //Adding details in Payment History Data
+//                 var objarr =[];
+//                 var date = new Date(new Date().toDateString());
+//                 //PostPaid Functionality Remaining
+//                 var prepaidObj = new BroadbandPayHistory({
+//                     "userId" : paymentdet.user,
+//                     "productId" : paymentdet.broadband,
+//                     "plantype" : paymentdet.plantype,
+//                     "planfrom" : date,
+//                     "plantill" : new Date(date.getTime()+(parseInt(paymentdet.planduration)*24*60*60*1000)),
+//                     "referenceno" : paymentdet.transactionrefno,
+//                     "paymentstatus": "Paid",
+//                     "amount" : paymentdet.amount,
+//                     "status" : "active",
+//                     "isupgrade" : 0,
+//                     "usage" :  paymentdet.plandata+"|"  ///75 total data  75|5 means 70GB Data remaining first day consumption 5
+//                 })
+//                 objarr.push(prepaidObj);
                 
-                objarr.forEach(element => {
-                    element.save((err,result)=>{
-                        if(err){
-                            return res.status(404).json({
-                                message : "User Paid for scheme, Some Error occured in backoffice"
-                            })
-                        }
-                    })
-                });
-                res.json(paymentdet);
-        })
-    }
-}
+//                 objarr.forEach(element => {
+//                     element.save((err,result)=>{
+//                         if(err){
+//                             return res.status(404).json({
+//                                 message : "User Paid for scheme, Some Error occured in backoffice"
+//                             })
+//                         }
+//                     })
+//                 });
+//                 res.json(paymentdet);
+//         })
+//     }
+// }
 
 
 //Broadband Upgrade or Renew
+
 exports.BroadbandRenewalUpgradeRequest =(req,res)=>{
     //currentplan object will be of broadbandpayhistorytype
     var currentplan = req.body.currentplan;
@@ -118,122 +206,229 @@ exports.BroadbandRenewalUpgradeRequest =(req,res)=>{
             "existingplanId" : currentplan._id,
             "address" : req.body.address,
             "amount" : (newplan === undefined || newplan === null)?(plans[0].monthlyprice):newplan.monthlyprice,  ///if admin upgraded price afterwords then needs to be modified
-            "plantype" : newplan.plantype,
+            "plantype" : (newplan === undefined || newplan === null)? currentplan.plantype :newplan.plantype,
             "isupgrade" : (newplan === undefined || newplan === null)?0:1,
-            "planduration" : (newplan === undefined || newplan === null)?plans[0].validity : newplan.validity
+            "planduration" : (newplan === undefined || newplan === null)?plans[0].validity : newplan.validity,
+            "plandata" : (newplan === undefined || newplan === null)?plans[0].data : newplan.data,
+            "cardId" : req.paymentcard._id
         })
-        request.save((err,data)=>{
+        request.save((err,requestdata)=>{
             if(err){
                 return res.status(404).json({
                     error : "Buy broadband request failed"
                 })
             }
-            data.paymentlink = "https://paytm.com" //make it configurable
-            data.callbackUrl = "/broadbandpaymentrenewalres" /// frontend ROute that will reroute to another function
-            res.json(data);
+
+            ////Payment Gateway Call for the 
+            var fetchOption ={
+                method : 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body : JSON.stringify({
+                    _id : requestdata._id,
+                    price: requestdata.amount,
+                    cardnumber : req.paymentcard.cardnumber,
+                    expirydate : req.paymentcard.expirydate,
+                    cvv : req.body.cvv
+                })
+            }
+
+            fetch("http://localhost:8089/paybroadband",fetchOption)
+                .then(response=>response.json())
+                .then(paymentresponse=>{
+                    var updateobj;
+                    if(paymentresponse.status === false){
+                        updateobj = {
+                            status : "Failed",
+                            error : paymentresponse.error
+                        }
+                    }else{
+                        updateobj ={
+                            status : "Success",
+                            transactionrefno : paymentresponse.referenceno
+                        }
+                    }
+                    BroadbandRequest.findOneAndUpdate(
+                        {_id : requestdata._id},
+                        {$set : updateobj},
+                        {new: true},
+                        (err,paymentdet)=>{
+                            if(err){
+                                return res.status(404).json({
+                                    error : "Error Occured while saving data"
+                                })
+                            }
+                            if(paymentresponse.status === false){ /////failed request
+                                res.json({
+                                    message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
+                                })
+                            }else{
+                                BroadbandPayHistory.findById(paymentdet.existingplanId).exec((err,plans)=>{
+                                    var date;
+                                    var updateobj;
+                                    if(new Date(plans.plantill).getTime() < new Date(new Date().toDateString()).getTime()){
+                                        //After Plan Expiry
+                                        date = new Date(new Date().toDateString());
+                                        //handling closing active plans
+                                        updateobj = {
+                                            status : "closed",
+                                        }
+                                    }else{
+                                        //before plan expiry
+                                        date = new Date(new Date(plans.plantill).getTime() + (1*24*60*60*1000));
+                                        //added 1 day after plan ends
+                                        updateobj = {
+                                            isupgrade : 1,
+                                        }
+                                    }
+                                    BroadbandPayHistory.findOneAndUpdate(
+                                        {_id : paymentdet.existingplanId},
+                                        {$set : updateobj},
+                                        {new: true},
+                                        (err,plans)=>{
+                                            if(err){
+                                                return res.status(404).json({
+                                                    message : "User Paid for scheme, Some Error occured in backoffice"
+                                                })
+                                            }
+                                        })
+                
+                
+                                    var prepaidObj = new BroadbandPayHistory({
+                                        "userId" : paymentdet.user,
+                                        "productId" : paymentdet.broadband,
+                                        "plantype" : paymentdet.plantype,
+                                        "planfrom" : date,
+                                        "plantill" : new Date(date.getTime()+(parseInt(paymentdet.planduration)*24*60*60*1000)),  //bydefault 30 days added
+                                        "referenceno" : paymentdet.transactionrefno,
+                                        "paymentstatus": "Paid",
+                                        "amount" : paymentdet.amount,
+                                        "status" : "active",
+                                        "isupgrade" : 0,
+                                        "cardId" : paymentdet.cardId,
+                                        "usage" :  paymentdet.plandata+"|" 
+                                    })
+                                    prepaidObj.save((err,result)=>{
+                                        if(err){
+                                            console.log(err);
+                                            return res.status(404).json({
+                                                message : "User Paid for scheme, Some Error occured in backoffice"
+                                            })
+                                        }
+                                    })
+                                    res.json(paymentdet);
+                                })
+                            }
+                        })
+                })
         })
     })
 }
 
+//Commented As we are calling the payment gateway from backend
 //Returened from Payment Gateway
-exports.BroadbandPlanRenewalUpgrade =(req,res)=>{
-    //payment failed
-    if(req.body.paymentstatus === false){
-        BroadbandRequest.findOneAndUpdate(
-            {_id : req.body._id},
-            {$set : {
-                status : "Failed",
-                error : req.body.error
-            }},
-            {new: true},
-            (err,paymentdet)=>{
-                if(err){
-                    return res.status(404).json({
-                        error : "Payment failed"
-                    })
-                }
-                res.json({
-                    message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
-                })
-            }
-        )
-    }else{
-        //payment success
-        BroadbandRequest.findOneAndUpdate(
-            {_id : req.body._id},
-            {$set : {
-                status : "Success",
-                transactionrefno : req.body.referenceno
-            }},
-            {new: true},
-            (err,paymentdet)=>{
-                if(err){
-                    return res.status(404).json({
-                        error : "Failed to stored payment result"
-                    })
-                }
-                //get PaymentHistory details
-                ///Check for Due date of existing plan first
-                Broadbandpayhistory.find({_id : paymentdet.existingplanId}).exec((err,plans)=>{
-                    var date;
-                    var updateobj;
-                    if(plans.plantill.getTime() < new Date(new Date().toDateString()).getTime()){
-                        //After Plan Expiry
-                        date = new Date(new Date().toDateString());
-                        //handling closing active plans
-                        updateobj = {
-                            status : "closed",
-                        }
-                    }else{
-                        //before plan expiry
-                        date = new Date(plans.plantill.getTime() + (1*24*60*60*1000));
-                        //added 1 day after plan ends
-                        updateobj = {
-                            isupgrade : 1,
-                        }
-                    }
-                    BroadbandPayHistory.findOneAndUpdate(
-                        {_id : paymentdet.existingplanId},
-                        {$set : updateobj},
-                        {new: true},
-                        (err,plans)=>{
-                            if(err){
-                                return res.status(404).json({
-                                    message : "User Paid for scheme, Some Error occured in backoffice"
-                                })
-                            }
-                        })
+// exports.BroadbandPlanRenewalUpgrade =(req,res)=>{
+//     //payment failed
+//     if(req.body.paymentstatus === false){
+//         BroadbandRequest.findOneAndUpdate(
+//             {_id : req.body._id},
+//             {$set : {
+//                 status : "Failed",
+//                 error : req.body.error
+//             }},
+//             {new: true},
+//             (err,paymentdet)=>{
+//                 if(err){
+//                     return res.status(404).json({
+//                         error : "Payment failed"
+//                     })
+//                 }
+//                 res.json({
+//                     message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
+//                 })
+//             }
+//         )
+//     }else{
+//         //payment success
+//         BroadbandRequest.findOneAndUpdate(
+//             {_id : req.body._id},
+//             {$set : {
+//                 status : "Success",
+//                 transactionrefno : req.body.referenceno
+//             }},
+//             {new: true},
+//             (err,paymentdet)=>{
+//                 if(err){
+//                     return res.status(404).json({
+//                         error : "Failed to stored payment result"
+//                     })
+//                 }
+//                 //get PaymentHistory details
+//                 ///Check for Due date of existing plan first
+//                 BroadbandPayHistory.findById(paymentdet.existingplanId).exec((err,plans)=>{
+//                     var date;
+//                     var updateobj;
+//                     if(new Date(plans.plantill).getTime() < new Date(new Date().toDateString()).getTime()){
+//                         //After Plan Expiry
+//                         date = new Date(new Date().toDateString());
+//                         //handling closing active plans
+//                         updateobj = {
+//                             status : "closed",
+//                         }
+//                     }else{
+//                         //before plan expiry
+//                         date = new Date(new Date(plans.plantill).getTime() + (1*24*60*60*1000));
+//                         //added 1 day after plan ends
+//                         updateobj = {
+//                             isupgrade : 1,
+//                         }
+//                     }
+//                     BroadbandPayHistory.findOneAndUpdate(
+//                         {_id : paymentdet.existingplanId},
+//                         {$set : updateobj},
+//                         {new: true},
+//                         (err,plans)=>{
+//                             if(err){
+//                                 return res.status(404).json({
+//                                     message : "User Paid for scheme, Some Error occured in backoffice"
+//                                 })
+//                             }
+//                         })
 
 
-                    var prepaidObj = new BroadbandPayHistory({
-                        "userId" : paymentdet.user,
-                        "productId" : paymentdet.broadband,
-                        "plantype" : paymentdet.plantype,
-                        "planfrom" : date,
-                        "plantill" : new Date(date.getTime()+(parseInt(paymentdet.planduration)*24*60*60*1000)),  //bydefault 30 days added
-                        "referenceno" : paymentdet.transactionrefno,
-                        "paymentstatus": "Paid",
-                        "amount" : paymentdet.amount,
-                        "status" : "active",
-                        "isupgrade" : 0,
-                        "usage" :  paymentdet.plandata+"|" 
-                    })
-                    prepaidObj.save((err,result)=>{
-                        if(err){
-                            return res.status(404).json({
-                                message : "User Paid for scheme, Some Error occured in backoffice"
-                            })
-                        }
-                    })
-                    res.json(paymentdet);
-                })
-            })
-        }
-}
+//                     var prepaidObj = new BroadbandPayHistory({
+//                         "userId" : paymentdet.user,
+//                         "productId" : paymentdet.broadband,
+//                         "plantype" : paymentdet.plantype,
+//                         "planfrom" : date,
+//                         "plantill" : new Date(date.getTime()+(parseInt(paymentdet.planduration)*24*60*60*1000)),  //bydefault 30 days added
+//                         "referenceno" : paymentdet.transactionrefno,
+//                         "paymentstatus": "Paid",
+//                         "amount" : paymentdet.amount,
+//                         "status" : "active",
+//                         "isupgrade" : 0,
+//                         "usage" :  paymentdet.plandata+"|" 
+//                     })
+//                     prepaidObj.save((err,result)=>{
+//                         if(err){
+//                             console.log(err);
+//                             return res.status(404).json({
+//                                 message : "User Paid for scheme, Some Error occured in backoffice"
+//                             })
+//                         }
+//                     })
+//                     res.json(paymentdet);
+//                 })
+//             })
+//         }
+// }
 
 //Get BroadBandCurrent plan
+
+
 exports.getCurrentBroadbandPlan = (req,res)=>{
-    BroadbandPayHistory.find({user : req.profile._id, status: "active"}).exec((err,plans)=>{
+    BroadbandPayHistory.find({userId : req.profile._id, status: "active"}).exec((err,plans)=>{
         if(err){
             return res.status(404).json({
                 error : "Error While getting current plan of user"
@@ -246,7 +441,7 @@ exports.getCurrentBroadbandPlan = (req,res)=>{
 
 //Get Broadband payment success history
 exports.getBroadbandPaymentHistory =(req,res)=>{
-    BroadbandPayHistory.find({user : req.profile._id}).exec((err,plans)=>{
+    BroadbandPayHistory.find({userId : req.profile._id}).exec((err,plans)=>{
         if(err){
             return res.status(404).json({
                 error : "Error While getting current plan of user"

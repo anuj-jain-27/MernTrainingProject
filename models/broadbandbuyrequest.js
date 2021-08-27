@@ -14,6 +14,10 @@ const broadbandSchema = new mongoose.Schema({
         type : ObjectId,
         ref : "BroadbandPayHistory"
     },
+    cardId :{
+        type : ObjectId,
+        ref : "PaymentCard"
+    },
     address :{
         type : String,
         trim : true,
@@ -34,7 +38,7 @@ const broadbandSchema = new mongoose.Schema({
     plantype :{
         type : String,
         trim : true,
-        required : true,
+        required : false,
         maxlength : 32,
         enum : ["Prepaid","Postpaid"]
     },
@@ -44,12 +48,12 @@ const broadbandSchema = new mongoose.Schema({
     },
     transactionrefno :{
         type : String,
-        trim : true,
+        trim : false,
         maxlength : 50
     },
     dueamount :{
         type : Number,
-        required : true
+        required : false
     },
     isUpgrade :{
         type : Number,
@@ -60,7 +64,11 @@ const broadbandSchema = new mongoose.Schema({
     },
     plandata :{
         type : Number
-    } 
+    },
+    cardId :{
+        type : ObjectId,
+        ref: "PaymentCard"
+    }
 },{timestamps :true})
 
 

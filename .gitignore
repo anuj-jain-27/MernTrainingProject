@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/PaymentGateway_Standalone/node_modules
 /.pnp
 .pnp.js
 

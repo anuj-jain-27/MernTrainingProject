@@ -16,7 +16,11 @@ const ProductCart = mongoose.model("ProductCart",productCartSchema)
 
 const orderSchema = new mongoose.Schema({
     products: [productCartSchema],
-    transaction_id:{},
+    transaction_id:{
+        type : String,
+        trim : true,
+        maxlength : 50
+    },
     amount:{type:Number},
     address : String,
     status : {
@@ -24,10 +28,19 @@ const orderSchema = new mongoose.Schema({
       default : "Recieved"  ,
       enum : ["Cancelled", "Delivered", "Shipped", "Processing", "Recieved"]      
     },
+    error :{
+        type : String,
+        trim : true,
+        maxlength : 50
+    },
     updated : Date,
     user: {
         type : ObjectId,
         ref: "User"
+    },
+    cardId :{
+        type : ObjectId,
+        ref: "PaymentCard"
     }
 },{timestamps:true})
 
