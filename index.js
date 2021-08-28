@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const passport = require('passport')
 
 const authRoutes = require("./routes/auth")
 const userRoutes = require("./routes/user")
@@ -17,7 +18,7 @@ const app = express();
 
 
 
-mongoose.connect('mongodb://localhost:27017/csDB', {
+mongoose.connect('mongodb://localhost:27017/csTestDB', {
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
     useCreateIndex: true,
@@ -29,6 +30,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 
@@ -45,7 +48,7 @@ app.use("/api",broadbandOpsRoutes)
 
 
 
-app.listen(5000,()=>{
+app.listen(8000,()=>{
     console.log("Server started")
 })
 

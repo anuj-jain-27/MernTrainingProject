@@ -1,8 +1,78 @@
 const User = require("../models/user")
 const jwt = require("jsonwebtoken")
 const expressJwt = require('express-jwt')
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const keys = require('../config/keys');
+const cookieSession= require('cookie-session');
+
 
 const JWT_SECRET ="sshhhh"
+
+passport.serializeUser((user,done)=>{
+    done(null,user.id);
+});
+
+//deserializing 
+passport.deserializeUser((id,done)=>{
+    User.findById(id).then((user)=>{
+    done(null,user);
+    });
+   
+});
+
+var myemail ="",accesstoken = ""
+var myprofile = {}
+passport.use(
+    new GoogleStrategy({
+        // options for google strategy
+        callbackURL:'http://localhost:8000/api/auth/google/profile',
+        clientID: keys.google.clientID,
+        clientSecret:keys.google.clientSecret
+        //accessToken is used to access the users profile,mails
+        //refreshtoken is cause the accesstoken expires after a while
+        //profile is the one that brings back info from google
+        //done fucntion is called after we are done with callback
+    },   function(accessToken, refreshToken, profile, done) {
+        //check user table for anyone with a google ID of profile.id
+         myprofile = profile
+        console.log(profile)
+        console.log(accessToken)
+        User.findOne({
+            'googleId': profile.id 
+        }, function(err, user) {
+            if (err) {
+                return done(err);
+            }
+            //No user was found... so create a new user with values from Google (all the profile. stuff)
+            if (!user) {
+                user = new User({
+                    _id : profile.id,
+                    name: profile.name.givenName,
+                    lastname :profile.name.familyName,
+                    email: profile.emails[0].value,
+                   // username: profile.username,
+                    googleId : profile.id,
+                    //provider: 'facebook',
+                    //role: 1,
+                    //now in the future searching on User.findOne({'facebook.id': profile.id } will match because of this next line
+                    //facebook: profile._json
+                });
+                user.save(function(err,user) {
+                    if (err) console.log(err);
+                    // myemail = user.email
+                    return done(err, user);
+                });
+            } else {
+                //found user. Return
+              // accesstoken = accessToken;
+                
+                return done(err, user);
+            }
+        });
+    })
+);
+
 
 exports.signup = (req,res)=>{
    
@@ -21,33 +91,71 @@ exports.signup = (req,res)=>{
     })
 }
 
-exports.signin = (req,res)=>{
-    const {email,password} = req.body;
+// exports.signin = (req,res)=>{
+//     const {email,password} = req.body;
 
-    User.findOne({email},(err,user)=>{
-        if(err || !user){ 
-           return res.status(400).json({
-            error : "User email is not present in database"
-            })
-     }
+//     User.findOne({email},(err,user)=>{
+//         if(err || !user){ 
+//            return res.status(400).json({
+//             error : "User email is not present in database"
+//             })
+//      }
      
-     if(!user.authenticate(password)){
-        return res.status(400).json({
-             error : "Email and password do not match"
-         })
-     }
+//      if(!user.authenticate(password)){
+//         return res.status(400).json({
+//              error : "Email and password do not match"
+//          })
+//      }
     
-     // Create Token
-     const token = jwt.sign({_id : user._id},JWT_SECRET)
+//      // Create Token
+//      const token = jwt.sign({_id : user._id},JWT_SECRET)
      
+//      res.cookie("token",token,{expire : new Date() + 999}); 
+        
+//      const {_id,name,email,role} =user;
+     
+//      return res.json({token,user : {_id,name,email,role}})
+//     })
+// }
+
+
+exports.signin = (req,res)=>{
+    // const {email,password} = req.body;
+       
+     User.findOne({'_id': myprofile.id},(err,user)=>{
+         if(err || !user){ 
+            return res.status(400).json({
+             error : "User email is not present in database"
+             })
+      }
+      
+     //  if(!user.authenticate(password)){
+     //     return res.status(400).json({
+     //          error : "Email and password do not match"
+     //      })
+     //  }
+     
+      // Save Token
+     //  var token = accesstoken
+      
+     //  res.cookie("token",token,{expire : new Date() + 999}); 
+         
+     //  const {googleId,name,email,role} =user;
+      
+     //  return res.json({token,user : {googleId,name,email,role}})
+     const token = jwt.sign({_id : user._id},JWT_SECRET)
+      
      res.cookie("token",token,{expire : new Date() + 999}); 
         
      const {_id,name,email,role} =user;
      
      return res.json({token,user : {_id,name,email,role}})
-    })
-}
-
+ 
+ 
+ 
+     })
+ }
+  
 
 exports.signout = (req,res)=>{
 

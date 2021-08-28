@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const {getUserById,getUser,getAllUsers,userPurchaseList} = require("../controllers/user")
+const {getUserById,getUser,getAllUsers,userPurchaseList,updateUser} = require("../controllers/user")
 const {getCurrentBroadbandPlan,getBroadbandPaymentHistory} = require("../controllers/broadbandops")
 const {isSignedIn,isAuthenticated,isAdmin} = require("../controllers/auth")
 const {getAllUserCards,addUserCards} = require("../controllers/paymentcards")
@@ -16,6 +16,8 @@ router.get("/users",getAllUsers);
 //router.put("/user/:userId",)
 
 router.get("/orders/user/:userId",isSignedIn,isAuthenticated,userPurchaseList)
+
+router.put("/user/:userId",isSignedIn,isAuthenticated,updateUser);
 
 router.get("/broadband/user/:userId",isSignedIn,isAuthenticated,getCurrentBroadbandPlan) //
 

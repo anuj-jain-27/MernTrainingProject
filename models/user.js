@@ -3,7 +3,9 @@ const crypto = require('crypto')
 const { v4: uuidv4 } = require('uuid');
 
 var userSchema = new mongoose.Schema({
-     
+    _id :{
+        type : String,
+     },
     name:{
         type : String,
         required:true,
@@ -25,9 +27,12 @@ var userSchema = new mongoose.Schema({
         type : String,
         trim : true
     },
-    encry_password : {
-        type : String,
-        required : true 
+    // encry_password : {
+    //     type : String,
+    //     required : false 
+    // },
+    googleId : {
+        type : String
     },
     salt : String,
     role : {
