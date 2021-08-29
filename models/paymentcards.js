@@ -3,7 +3,7 @@ const {ObjectId} = mongoose.Schema;
 
 const paymentcards = new mongoose.Schema({
     userId :{
-        type : ObjectId,
+        type : String,
         ref: "User"
     },
     cardtype:{

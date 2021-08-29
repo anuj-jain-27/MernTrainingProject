@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 const {Order,ProductCart} = require("../models/order")
 
+const sysconfig = require("../config/systemconfig")
 
 exports.getOrderById = (req,res,next,id) => {
  
@@ -19,12 +20,13 @@ exports.getOrderById = (req,res,next,id) => {
 }
 
 exports.createOrder = (req,res) => {
-    req.body.order.user = req.profile
+    req.body.order.user = req.profile._id
+    req.body.order.cardId = req.paymentcard._id
     const order = new Order(req.body.order)
     order.save((err,order)=>{
       if(err){
           return res.status(400).json({
-              error : "Unable to save order in database"
+              error : err //"Unable to save order in database"
           })
       }
       var fetchOption ={
@@ -42,7 +44,7 @@ exports.createOrder = (req,res) => {
         }
 
         ///Payment Gateway Call
-        fetch("http://localhost:8089/paybroadband",fetchOption)
+        fetch(sysconfig.paymentgateway,fetchOption)
                 .then(response=>response.json())
                 .then(paymentresponse=>{
                     var updateobj;
@@ -79,6 +81,11 @@ exports.createOrder = (req,res) => {
                         }
                     )
 
+                })
+                .catch((err)=>{
+                    return res.status(404).json({
+                        error : "Error Occured while Connecting to Payment GAteway server"
+                    })
                 })
     //   res.json(order)  
     })

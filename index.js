@@ -13,6 +13,9 @@ const orderRoutes = require("./routes/order")
 const broadbandRoutes = require("./routes/broadband");
 const broadbandLocRoutes = require("./routes/broadbandLocation");
 const broadbandOpsRoutes = require("./routes/broadbandops")
+const postRoutes = require('./routes/posts');
+const dataRoutes = require("./routes/dataconsumption")
+const planRoutes =require('./routes/plans');
 
 const app = express();
 
@@ -45,7 +48,9 @@ app.use("/api",orderRoutes)
 app.use("/api",broadbandRoutes)
 app.use("/api",broadbandLocRoutes)
 app.use("/api",broadbandOpsRoutes)
-
+app.use('/api', postRoutes);
+app.use('/api', dataRoutes);
+app.use('/api', planRoutes);
 
 
 app.listen(8000,()=>{

@@ -3,7 +3,7 @@ const passport = require('passport')
 var router = express.Router()
 const {signout,signup,signin,isSignedIn} = require("../controllers/auth")
 
-router.get("/signout",signout)
+
 
 router.get("/testroute",isSignedIn,(req,res)=>{
 
@@ -11,6 +11,18 @@ router.get("/testroute",isSignedIn,(req,res)=>{
    res.json(req.auth)
 })
 
+
+// const authCheck = (req, res, next) => {
+//   if(!req.user){
+//       res.redirect('/auth/google');
+//   } else {
+//       next();
+//   }
+// };
+
+// router.get('/', authCheck, (req, res) => {
+//   res.render('profile', { user: req.user });
+// });
 
 router.get("/auth/google",
   passport.authenticate('google', { scope: ["profile","email"] })
@@ -48,7 +60,7 @@ router.get("/auth/google/profile",
 // For google auth
 router.get("/profile",signin)
 
-
+router.get("/signout",signout)
 // router.post("/signup",signup)
 
 // router.post("/signin",signin)

@@ -3,6 +3,8 @@ const BroadbandPayHistory = require("../models/broadbandpayhistory")
 const BroadbandRequest = require("../models/broadbandbuyrequest")
 const Broadband = require("../models/broadband");
 
+const sysconfig = require("../config/systemconfig")
+
 //Buy BroadBandPlan
 exports.buynewbroadband = (req,res) =>{
     var amountcalc;
@@ -42,7 +44,7 @@ exports.buynewbroadband = (req,res) =>{
         }
 
         ///Payment Gateway Call
-        fetch("http://localhost:8089/paybroadband",fetchOption)
+        fetch(sysconfig.paymentgateway,fetchOption)
                 .then(response=>response.json())
                 .then(paymentresponse=>{
                     var updateobj;
@@ -234,7 +236,7 @@ exports.BroadbandRenewalUpgradeRequest =(req,res)=>{
                 })
             }
 
-            fetch("http://localhost:8089/paybroadband",fetchOption)
+            fetch(sysconfig.paymentgateway,fetchOption)
                 .then(response=>response.json())
                 .then(paymentresponse=>{
                     var updateobj;
@@ -321,6 +323,11 @@ exports.BroadbandRenewalUpgradeRequest =(req,res)=>{
                                 })
                             }
                         })
+                })
+                .catch((err)=>{
+                    return res.status(404).json({
+                        error : "Error Occured while Connecting to Payment GAteway server"
+                    })
                 })
         })
     })

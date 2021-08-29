@@ -1,5 +1,7 @@
 const User = require("../models/user")
 const jwt = require("jsonwebtoken")
+const mongoose = require('mongoose');
+const {ObjectId} = mongoose.Schema;
 const expressJwt = require('express-jwt')
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -47,7 +49,7 @@ passport.use(
             //No user was found... so create a new user with values from Google (all the profile. stuff)
             if (!user) {
                 user = new User({
-                    _id : profile.id,
+                    _id :  profile.id,
                     name: profile.name.givenName,
                     lastname :profile.name.familyName,
                     email: profile.emails[0].value,
@@ -91,6 +93,7 @@ exports.signup = (req,res)=>{
     })
 }
 
+
 // exports.signin = (req,res)=>{
 //     const {email,password} = req.body;
 
@@ -121,7 +124,7 @@ exports.signup = (req,res)=>{
 
 exports.signin = (req,res)=>{
     // const {email,password} = req.body;
-       
+
      User.findOne({'_id': myprofile.id},(err,user)=>{
          if(err || !user){ 
             return res.status(400).json({
@@ -155,16 +158,20 @@ exports.signin = (req,res)=>{
  
      })
  }
+
   
 
 exports.signout = (req,res)=>{
-
-   res.clearCookie("token")
+    req.logout();
+    res.clearCookie("token")
+    myprofile = {}
+    res.redirect("/");
+  
     
-    res.send("User signout successful")
-    res.json({
-        message : "Signout successful"
-    });
+    console.log("user signed out")
+    // res.json({
+    //     message : "Signout successful"
+    // });
     
 
 }

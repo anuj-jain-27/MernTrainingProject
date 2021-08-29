@@ -35,7 +35,7 @@ const orderSchema = new mongoose.Schema({
     },
     updated : Date,
     user: {
-        type : ObjectId,
+        type : String,
         ref: "User"
     },
     cardId :{
