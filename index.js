@@ -20,7 +20,7 @@ const app = express();
 
 
 
-mongoose.connect('mongodb://localhost:27017/csTestDB', {
+mongoose.connect('mongodb+srv://AnushaMadan:Madan1204@cluster0.k0byf.mongodb.net/TrainingProject?retryWrites=true&w=majority', {
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
     useCreateIndex: true,
