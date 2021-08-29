@@ -1,7 +1,8 @@
 var express = require('express')
 const passport = require('passport')
 var router = express.Router()
-const {signout,signup,signin,isSignedIn} = require("../controllers/auth")
+const {signout,signup,testsignin,signin,isSignedIn} = require("../controllers/auth")
+// const accesstoken  = require('../controllers/auth')
 
 
 
@@ -64,7 +65,7 @@ router.get("/signout",signout)
 // router.post("/signup",signup)
 
 // router.post("/signin",signin)
-
+router.get("/profiletest",testsignin)
 
 
 module.exports = router;

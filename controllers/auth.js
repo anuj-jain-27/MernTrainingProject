@@ -38,8 +38,8 @@ passport.use(
     },   function(accessToken, refreshToken, profile, done) {
         //check user table for anyone with a google ID of profile.id
          myprofile = profile
-        console.log(profile)
-        console.log(accessToken)
+        console.log("profile: ",profile)
+        console.log("access token",accessToken)
         User.findOne({
             'googleId': profile.id 
         }, function(err, user) {
@@ -120,7 +120,9 @@ exports.signup = (req,res)=>{
 //      return res.json({token,user : {_id,name,email,role}})
 //     })
 // }
-
+exports.testsignin=(req,res)=>{
+ 
+}
 
 exports.signin = (req,res)=>{
     // const {email,password} = req.body;

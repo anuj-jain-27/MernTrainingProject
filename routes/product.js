@@ -22,10 +22,10 @@ router.get("/product/:productId",getProduct)
 router.get("/product/photo/:productId",photo);
 
 // UPDATE
-router.put("/product/:productId/:userId",isSignedIn,isAuthenticated,isAdmin,updateProduct)
+router.put("/product/:productId",updateProduct)//router.put("/product/:productId/:userId",isSignedIn,isAuthenticated,isAdmin,updateProduct)
 
 // DELETE 
-router.delete("/product/:productId/:userId",isSignedIn,isAuthenticated,isAdmin,deleteProduct)
+router.delete("/product/:productId",deleteProduct)//router.delete("/product/:productId/:userId",isSignedIn,isAuthenticated,isAdmin,deleteProduct)
 
 // Product List
 router.get("/products",getAllProducts)

@@ -19,9 +19,11 @@ exports.getProductById = (req,res,next,id)=>{
 }
 
 exports.createProduct = (req,res)=>{
+    //console.log(req);
+    console.log("create product")
     let form  = new formidable.IncomingForm();
     form.keepExtensions = true;
-
+    console.log("form: ",form)
     form.parse(req,(err,fields,file)=>{
         if(err){
             return res.status(400).json({
@@ -29,9 +31,9 @@ exports.createProduct = (req,res)=>{
             })
         }
          
-       const {name,description,price,category,stock} = fields;
-       
-       if(!name || !description || !price || !category || !stock){
+       const {name,description,price,stock} = fields;
+       console.log("form fields: ",fields)
+       if(!name || !description || !price || !stock){
            return res.status(400).json({
                error : "Please include all fields"
            })
@@ -49,7 +51,7 @@ exports.createProduct = (req,res)=>{
             product.photo.data = fs.readFileSync(file.photo.path);
             product.photo.contentType = file.photo.type;
         }
-        console.log(product);  
+        console.log(product.name);  
         // Saving Image to Database 
         product.save((err,product)=>{
             if(err){
@@ -80,7 +82,7 @@ exports.photo = (req,res,next) =>{
 
 
 exports.updateProduct = (req,res) => {
-
+    console.log("inside updateProduct controller")
     let form  = new formidable.IncomingForm();
     form.keepExtensions = true;
 
@@ -139,7 +141,6 @@ exports.getAllProducts = (req,res) => {
    let maxPhotos = req.query.limit ? parseInt(req.query.limit): 10
    let sortBy = req.query.sortBy ? req.query.sortBy : "_id"
     Product.find({})
-    .select("-photo")
     .populate("category")
     .limit(maxPhotos)
     .sort([[sortBy,"asc"]])
@@ -149,8 +150,7 @@ exports.getAllProducts = (req,res) => {
                 error : "No products in database"
             })
         }
-
-        res.json(products)
+        res.json(productList)
     })
 
 }
@@ -175,7 +175,7 @@ exports.updateStockAndSold = (req,res,next) =>{
         return {
             updateOne : {
                 filter : {_id : prod._id},
-                update : {$inc : {stock : -prod.count,sold : +prod.count}}
+                update : {$inc : {stock : -prod.quantity,sold : +prod.quantity}}
             }
         }
     })
@@ -189,7 +189,3 @@ exports.updateStockAndSold = (req,res,next) =>{
         next();
     })
 }
-
-
-
-
