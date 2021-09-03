@@ -87,7 +87,7 @@ exports.updateBroadbandLocation = (req,res)=>{
 
 exports.removelocation= (req,res)=>{
     var id = req.broadbandloc._id;
-    Broadband.findByIdAndRemove(
+    BroadbandLocation.findByIdAndRemove(
         id,
         (err,location)=>{
             if(err){

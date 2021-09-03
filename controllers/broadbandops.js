@@ -71,14 +71,14 @@ exports.buynewbroadband = (req,res) =>{
                                     error : "Error Occured while saving data"
                                 })
                             }
-                            if(paymentresponse.status === false){ /////failed request
+                            if(paymentresponse.status === false){ //f///failed request
                                 res.json({
                                     message :"Payment failed, if amount is debited from your account it will be rolled backed soon"
                                 })
                             }else{ /////on success create broadband entry
                                 //Adding details in Payment History Data
                                 var objarr =[];
-                                var date = new Date(new Date().toDateString());
+                                var date = new Date(new Date());  ///.toDateString() to chenge it from midnight
                                 //PostPaid Functionality Remaining
                                 var prepaidObj = new BroadbandPayHistory({
                                     "userId" : paymentdet.user,
@@ -94,18 +94,19 @@ exports.buynewbroadband = (req,res) =>{
                                     "cardId" : paymentdet.cardId,
                                     "usage" :  paymentdet.plandata+"|"  ///75 total data  75|5 means 70GB Data remaining first day consumption 5
                                 })
-                                objarr.push(prepaidObj);
+                                // objarr.push(prepaidObj);
                                 
-                                objarr.forEach(element => {
-                                    element.save((err,result)=>{
+                                // objarr.forEach(element => {
+                                    prepaidObj.save((err,result)=>{
                                         if(err){
                                             return res.status(404).json({
-                                                error : "User Paid for scheme, Some Error occured in backoffice"
+                                                error : err//"User Paid for scheme, Some Error occured in backoffice"
                                             })
                                         }
+                                        res.json(paymentdet);
                                     })
-                                });
-                                res.json(paymentdet);
+                                // });
+                                // res.json(paymentdet);
                             }
                         }
                     )
@@ -267,12 +268,15 @@ exports.BroadbandRenewalUpgradeRequest =(req,res)=>{
                                 })
                             }else{
                                 BroadbandPayHistory.findById(paymentdet.existingplanId).exec((err,plans)=>{
+                                    if(err){
+                                        console.log(err)
+                                    }
                                     var date;
                                     var updateobj;
                                     if(new Date(plans.plantill).getTime() < new Date(new Date().toDateString()).getTime()){
                                         //After Plan Expiry
-                                        date = new Date(new Date().toDateString());
-                                        //handling closing active plans
+                                        date = new Date(new Date()); ///.toDateString() to chenge it from midnight
+                                        //handling closing active plans 
                                         updateobj = {
                                             status : "closed",
                                         }
@@ -318,8 +322,9 @@ exports.BroadbandRenewalUpgradeRequest =(req,res)=>{
                                                 message : "User Paid for scheme, Some Error occured in backoffice"
                                             })
                                         }
+                                        res.json(paymentdet);
                                     })
-                                    res.json(paymentdet);
+                                    // res.json(paymentdet);
                                 })
                             }
                         })
