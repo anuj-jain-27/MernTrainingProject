@@ -19,12 +19,12 @@ const paymentcards=require("./routes/paymentcards")
 const searchroutes=require("./routes/search")
 
 const app = express();
-// mongoose.connect('mongodb://localhost:27017/csDB', {
-//     useNewUrlParser: true, 
-//     useUnifiedTopology: true, 
-//     useCreateIndex: true,
-//     useFindAndModify: false
-// }).then(()=>console.log("DATABASE CONNECTED"));
+mongoose.connect('mongodb://localhost:27017/csDB', {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true, 
+    useCreateIndex: true,
+    useFindAndModify: false
+}).then(()=>console.log("DATABASE CONNECTED"));
 
 
 app.use(bodyParser.json());
@@ -48,9 +48,9 @@ app.use('/api', planRoutes);
 app.use('/api',paymentcards)
 app.use('/api',searchroutes)
 
-// app.listen(8000,()=>{
-//     console.log("Server started")
-// })
+app.listen(8000,()=>{
+    console.log("Server started")
+})
 module.exports = app
 
 const API = 'http:localhost:3000/api/'

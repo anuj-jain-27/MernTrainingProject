@@ -15,6 +15,7 @@
     "bootstrap": "^5.1.0",
     "bootstrap4-min-css": "^1.0.1",
     "card-validator": "^8.1.0",
+    "concurrently": "^6.2.1",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
