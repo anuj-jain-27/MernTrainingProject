@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const {getPlanMessageById, getPlanMessage, getAllPlans, createPlan, createPlanNew} = require("../controllers/Plans")
+const {getPlanMessageById, getPlanMessage, getAllPlans, createPlan, createPlanNew, getMobilePlanPaymentHistory} = require("../controllers/Plans")
 const {getPostMessageById} = require("../controllers/posts")
 const {getUserById} = require("../controllers/user")
 const {getUserCardById} = require("../controllers/paymentcards")
@@ -18,7 +18,7 @@ router.param("cardId",getUserCardById);
 router.get("/plan/:planid",getPlanMessage)
 router.get("/plans",getAllPlans)
 
-
+router.get("/plan/user/:userId",isSignedIn,isAuthenticated,getMobilePlanPaymentHistory)
 router.post("/plan/create/:postid/:cardId/:userId",isSignedIn,isAuthenticated,createPlanNew) ///,isSignedIn,isAuthenticated
 
 

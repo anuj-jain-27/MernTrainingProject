@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const passport = require('passport')
-
 const authRoutes = require("./routes/auth")
 const userRoutes = require("./routes/user")
 const categoryRoutes = require("./routes/category")
@@ -16,12 +15,11 @@ const broadbandOpsRoutes = require("./routes/broadbandops")
 const postRoutes = require('./routes/posts');
 const dataRoutes = require("./routes/dataconsumption")
 const planRoutes =require('./routes/plans');
+const paymentcards=require("./routes/paymentcards")
+const searchroutes=require("./routes/search")
 
 const app = express();
-
-
-
-// mongoose.connect('mongodb://localhost:27017/MyTelstraPortalDB', {
+// mongoose.connect('mongodb://localhost:27017/csDB', {
 //     useNewUrlParser: true, 
 //     useUnifiedTopology: true, 
 //     useCreateIndex: true,
@@ -35,10 +33,6 @@ app.use(cors());
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-
-
 // Routes
 app.use("/api",authRoutes)
 app.use("/api",userRoutes)
@@ -51,12 +45,12 @@ app.use("/api",broadbandOpsRoutes)
 app.use('/api', postRoutes);
 app.use('/api', dataRoutes);
 app.use('/api', planRoutes);
-
+app.use('/api',paymentcards)
+app.use('/api',searchroutes)
 
 // app.listen(8000,()=>{
 //     console.log("Server started")
 // })
-
 module.exports = app
 
 const API = 'http:localhost:3000/api/'

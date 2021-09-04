@@ -1,7 +1,13 @@
+
+import React from 'react';
+
+
 function Home() {
-    return (
-      <div>
+   
+  return (
+      <div >
         Home
+        
       </div>
     );
   }

@@ -150,7 +150,7 @@ exports.getAllProducts = (req,res) => {
             })
         }
 
-        res.json(products)
+        res.json(productList)
     })
 
 }
