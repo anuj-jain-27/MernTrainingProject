@@ -1,19 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import {login} from '../actions/auth'
+import {Button,Typography,List,Toolbar,CssBaseline,Drawer,AppBar,ListItem,ListItemIcon,ListItemText} from '@material-ui/core';
 
-//import Icon from '@material-ui/core/Icon';
-import { Home, PhoneAndroid, Router, Shop, ShoppingCart, AccountBox, ContactSupport, Payment } from "@material-ui/icons";
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {googlesignin} from '../actions/auth'
@@ -22,9 +10,7 @@ import * as actiontypes from '../constants/actionTypes'
 import { GoogleLogin } from 'react-google-login';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import Icon from './icons/googleicon'
-
 import { Home, PhoneAndroid, Router, Shop, ShoppingCart, AccountBox, ContactSupport,Payment } from "@material-ui/icons";
-
 import pic from '../images/telstra.png';
 
 const drawerWidth = 200;
