@@ -95,11 +95,11 @@ function Payment() {
               <Grid style={{marginLeft:"5px"}}item xs={12} sm={6}>
 
               {
-      plansMobile != {} ?<>
+      plansMobile != null ?<>
       <Card style={{height:"200px", width:"200px"}} elevation={6} >
       <div >
-      <Typography style={{marginLeft:"10px"}} variant="h8">Plan: {plansMobile.plan}</Typography>
-      <Typography style={{marginLeft:"10px"}} variant="body2" >Validity:  {plansMobile.validity}</Typography>
+      <Typography style={{marginLeft:"20px"}} variant="h8">Plan: {plansMobile.plan}</Typography>
+      <Typography style={{marginLeft:"20px"}} variant="body2" >Validity:  {plansMobile.validity}</Typography>
       <Typography variant="body2"></Typography>
       </div>
       <CardContent >
@@ -112,11 +112,11 @@ function Payment() {
       }
 
 {
-       broadband !={} ?<>
+       broadband !=null?<>
       <Card style={{height:"200px", width:"200px", marginTop:"20px"}} elevation={6} >
       <div >
-      <Typography style={{marginLeft:"10px"}} variant="h8">Plan: {broadband.name}</Typography>
-      <Typography style={{marginLeft:"10px"}} variant="body2" >Validity: {broadband.validity}</Typography>
+      <Typography style={{marginLeft:"20px"}} variant="h8">Plan: {broadband.name}</Typography>
+      <Typography style={{marginLeft:"20px"}} variant="body2" >Validity: {broadband.validity}</Typography>
       <Typography variant="body2"></Typography>
       </div>
       <CardContent >

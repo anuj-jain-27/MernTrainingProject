@@ -70,30 +70,34 @@ function PaymentForm_1() {
         dispatch(getcards(user));
     }, [dispatch])
     const cards = useSelector((state) => state.cards);
-
-    // console.log(cardID)
-    if(parseInt(plansMobile._id)!=" " ){
+    console.log(cards)
+    console.log(cardID)
+    if(plansMobile!=null){
       TotalCost=TotalCost+parseInt(plansMobile.cost)
     }
-    if(parseInt(broadband._id)!=" "){
+    if(broadband!=null){
       TotalCost=TotalCost+parseInt(broadband.monthlyprice)
     }
    
     console.log(paydetails)
-    console.log(cards)
-  
     console.log(cardID)
     const handleSubmit = e => {
       e.preventDefault()
       for (var i=0; i<cards.length;i++) {
         if(cards[i].cardnumber===Number(paydetails.CardNumber)){
           setCardId(cards[i]._id)
-
         }
       }
-           dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, user));
-           dispatch(broadbandpay(paydetails, broadband._id, cardID, user))
-
+      if(broadband!=null){
+        dispatch(broadbandpay(paydetails, broadband._id, cardID, user))
+        
+      }
+      if(plansMobile!=null){
+            dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, user));
+           
+          }
+            
+          
           //  if (plansMobile._id != " " && broadbandpay._id!=" ") {
           //    dispatch(mobileplanpay(paydetails, plansMobile._id,cardID, user));
           //    dispatch(broadbandpay(paydetails, plansMobile._id,cardID,  user))

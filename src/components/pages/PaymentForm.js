@@ -30,6 +30,7 @@ const handleChange = e => {
   })
 }
 var user=JSON.parse(localStorage.getItem('profile')).user._id
+
 const handleSubmit = e => {
   e.preventDefault()
   setErrors(validateInfo(values))
