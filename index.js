@@ -19,13 +19,22 @@ const paymentcards=require("./routes/paymentcards")
 const searchroutes=require("./routes/search")
 
 const app = express();
-mongoose.connect('mongodb://localhost:27017/csDB', {
+mongoose.connect('mongodb+srv://AnushaMadan:Madan1204@cluster0.k0byf.mongodb.net/TrainingProject?retryWrites=true&w=majority', {
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
     useCreateIndex: true,
     useFindAndModify: false
 }).then(()=>console.log("DATABASE CONNECTED"));
 
+//const CONNECTION_URL='mongodb+srv://AnushaMadan:Madan1204@cluster0.k0byf.mongodb.net/TrainingProject?retryWrites=true&w=majority'
+// const PORT=process.env.PORT || 8000;
+// mongoose.connect(CONNECTION_URL,{useNewUrlParser:true, useUnifiedTopology:true})
+//     .then(()=>app.listen(PORT,()=>{
+//         console.log(`Server running on port: ${PORT}`)
+        
+// }))
+//     .catch((error)=>console.log(error.message));
+// mongoose.set('useFindAndModify',false);
 
 app.use(bodyParser.json());
 app.use(cookieParser());

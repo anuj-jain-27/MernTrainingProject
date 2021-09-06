@@ -66,7 +66,7 @@ const Blocations = ({ currentId_blocation, setCurrentId_blocation, searchterm}) 
     !blocations.length ? <CircularProgress /> : (
         <Grid className={classes.container} container justify="center" alignItems="center" alignContent="center" spacing={4} >
           {(searchterm&&(searchResults.length==0))?<div><CircularProgress/> </div>:<div></div>}
-          {blocationjsx}
+          {/* {blocationjsx} */}
           {blocationjsx_1}
         </Grid>
       )

@@ -104,7 +104,7 @@ function Broadband() {
              <BroadbandMUsagePlans/>
              </Grid>
            </Grid>
-           <Typography>SEARCH PLAN BASED ON SUBURBS</Typography>
+           <Typography>SEARCH PLAN BASED ON SUBURBS, CITIES, STATES</Typography>
            <Searchbar searchterm={searchterm} setSearch={setSearchterm}  />
            <Blocations currentId_blocation={currentId_blocation} setCurrentId_blocation={setCurrentId_blocation} searchterm={searchterm} />
            </>
