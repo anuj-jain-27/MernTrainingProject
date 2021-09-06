@@ -43,7 +43,11 @@ var userSchema = new mongoose.Schema({
     purchases : {
         type : Array,
         default : [] 
-    }
+    },
+    cart:[{
+        product:{type : ObjectId,ref : "Product"},
+        quantity:{type:Number}
+    }]
 }, {timestamps :true});
 
 userSchema.virtual("password")

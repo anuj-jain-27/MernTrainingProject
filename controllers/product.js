@@ -1,4 +1,5 @@
 const Product = require("../models/product")
+const User=require("../models/user")
 const formidable = require("formidable")
 const _ = require("lodash")
 const fs = require("fs")
@@ -8,7 +9,7 @@ exports.getProductById = (req,res,next,id)=>{
   
     Product.findById(id).populate("category").exec((err,product)=>{
         if(err){
-            res.satus(400).json({
+            res.status(400).json({
                 error : "Product not found in database"
             })
         }
@@ -31,7 +32,7 @@ exports.createProduct = (req,res)=>{
             })
         }
          
-       const {name,description,price,stock} = fields;
+       const {name,description,price,stock,category} = fields;
        console.log("form fields: ",fields)
        if(!name || !description || !price || !stock){
            return res.status(400).json({
@@ -74,8 +75,8 @@ exports.getProduct = (req,res) => {
 // MIDDLEWARE
 exports.photo = (req,res,next) =>{
     if(req.product.photo.data){
-        res.set("Content-Type",req.product.photo.contentType)
-        return res.send(req.product.photo.data)
+        //res.set("Content-Type",req.product.photo.contentType)
+        return res.send(req.product.photo)
     }
     next();
 }
@@ -150,6 +151,7 @@ exports.getAllProducts = (req,res) => {
                 error : "No products in database"
             })
         }
+
         res.json(productList)
     })
 
@@ -166,6 +168,140 @@ exports.getCategories = (req,res) => {
     })
 }
 
+exports.searchProduct=(req,res)=>{
+    var searchterm=req.query.q
+    console.log("search",searchterm)
+    Product.find({
+          "$expr": {
+              "$regexMatch": {
+                "input": { "$concat": ["$name"," ","$description"] },
+                "regex": searchterm,
+                "options": "i"
+              }
+        }},(err,data)=>{
+            if(err)
+              return res.json("error: ",err.message)  
+              res.json(data)
+              //console.log(data)
+        });
+        console.log("searchend")
+}
+
+exports.addproducttocart=(req,res)=>{
+    if(!req.profile._id)
+    {
+        res.status(400).json({error:"User not Authenticated, Sign in first"})
+    }
+    User.findByIdAndUpdate(
+        req.profile._id,
+        {$push: {"cart": req.body}},
+        {new : true},
+        function(err, model) {
+            if(err){
+                res.status(400).json({
+                    error:"unable to add product to the cart"
+                })
+            }
+            User.findById(req.profile._id).populate("cart.product").exec((err,doc)=>{
+                if(err){
+                     return res.status(400).json({
+                         error : "No products present in cart"
+                     })
+                }
+                res.json(doc.cart)
+            })
+        }
+    )
+}
+exports.getproductsincart = (req,res) => {
+
+    User.findById(req.profile._id).populate("cart.product").exec((err,doc)=>{
+        if(err){
+             return res.status(400).json({
+                 error : "No products present in cart"
+             })
+        }
+    //    console.log(doc.cart)
+        res.json(doc.cart)
+    })
+}
+exports.deleteproductfromcart=(req,res)=>{
+    if(!req.profile._id)
+        res.status(400).json({error:"User not Authenticated, Sign in first"})
+    console.log(req.body)
+    User.findById(req.profile._id,(err, doc)=>{
+            if(err){
+                res.status(400).json({error:"unable to find the user" })
+            }
+            var idx =-1;
+            doc.cart.forEach((data,index)=>{
+                if(data?.product==req.body.id)
+                  {
+                      idx=index
+                      return
+                  }
+            })
+           // console.log(doc.cart)
+            console.log(idx)
+            
+            if (idx != -1) {
+                doc.cart.splice(idx, 1);
+                console.log("delete controller:",doc)
+                doc.save(function(error) {
+                    if (error) {
+                        console.log(error);
+                        res.status(400).json({error:"unable to save the changes"})
+                    } else 
+                        res.status(200).json(doc);
+                })
+                return;
+            }
+            res.status(404).json({error:"error occoured"});
+        })
+    }
+ 
+exports.emptycart = (req,res) => {
+    if(!req.profile._id)
+    res.status(400).json({error:"User not Authenticated, Sign in first"})
+    
+    User.findById(req.profile._id,(err, doc)=>{
+        if(err){
+            res.status(400).json({error:"unable to find the user" })
+        }
+        doc.cart=[]
+        doc.save(function(error) {
+            if (error) 
+                res.status(400).json({error:"unable to save the changes"})
+            else 
+               res.status(200).json(doc.cart);
+            })
+    })      
+}
+exports.updateproductoncart=(req,res)=>{
+    if(!req.profile._id)
+       res.status(400).json({error:"User not Authenticated, Sign in first"})
+
+    User.findById(req.profile._id,(err, doc)=>{
+        if(err){
+            res.status(400).json({error:"unable to find the user" })
+        }
+        doc.cart.every((data,index)=>{
+            if(data.product==req.body.id)
+              {
+                  doc.cart[index].quantity=req.body.quantity  
+                  return false
+              }
+              return true
+        })
+        doc.save(function(error) {
+            if (error) {
+            //        console.log(error);
+                    res.status(400).json({error:"unable to save the changes"})
+                } else 
+                    res.status(200).json(doc);
+            })
+    })
+}
 // MIDDLEWARE for frontend
 // TODO : Not included in routes for product as of now
 exports.updateStockAndSold = (req,res,next) =>{
@@ -175,7 +311,7 @@ exports.updateStockAndSold = (req,res,next) =>{
         return {
             updateOne : {
                 filter : {_id : prod._id},
-                update : {$inc : {stock : -prod.quantity,sold : +prod.quantity}}
+                update : {$inc : {stock : -prod.count,sold : +prod.count}}
             }
         }
     })

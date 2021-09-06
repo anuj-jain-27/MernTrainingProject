@@ -11,9 +11,9 @@ export const getProducts = () => async (dispatch) => {
     }
   };
 
-  export const addProduct = (prod) => async (dispatch) => {
+  export const addProduct = (prod,id) => async (dispatch) => {
     try {
-      const { data } = await api.createProduct(prod);
+      const { data } = await api.createProduct(prod,id);
       //console.log("createproduct")
       dispatch({ type: ADDPRODUCT, payload: data });
     } catch (error) {
@@ -31,9 +31,9 @@ export const getProducts = () => async (dispatch) => {
     }
   };
   
-  export const deleteProduct = (id) => async (dispatch) => {
+  export const deleteProduct = (id,userid) => async (dispatch) => {
     try {
-      await api.deleteProduct(id);
+      await api.deleteProduct(id,userid);
       console.log("deleteproduct")
       dispatch({ type: DELETEPRODUCT, payload: id });
     } catch (error) {

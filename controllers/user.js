@@ -56,14 +56,8 @@ exports.pushOrderInPurchaseList = (req,res,next)=>{
             description : prod.description,
             category : prod.category,
             quantity : prod.count,
-            amount : req.body.order.amount//,
-            // transaction_id : req.body.order.transaction_id 
-           // category : prod.category,
-         /* 
-            quantity : prod.quantity,
-            amount:prod.amount,//amount : req.body.order.amount,
-            transaction_id : req.body.order.transaction_id
-            */ 
+            amount : req.body.order.amount,
+            transaction_id : req.body.order.transaction_id 
         })
     })
     

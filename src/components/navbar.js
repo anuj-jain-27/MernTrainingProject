@@ -11,14 +11,22 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {login} from '../actions/auth'
+
 //import Icon from '@material-ui/core/Icon';
-import { Home, PhoneAndroid, Router, Shop, ShoppingCart, AccountBox, ContactSupport } from "@material-ui/icons";
+import { Home, PhoneAndroid, Router, Shop, ShoppingCart, AccountBox, ContactSupport, Payment } from "@material-ui/icons";
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {googlesignin} from '../actions/auth'
+import * as actiontypes from '../constants/actionTypes'
+
+import { GoogleLogin } from 'react-google-login';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import Icon from './icons/googleicon'
+
+import { Home, PhoneAndroid, Router, Shop, ShoppingCart, AccountBox, ContactSupport,Payment } from "@material-ui/icons";
 
 import pic from '../images/telstra.png';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import { NavLink } from 'react-router'
+
 const drawerWidth = 200;
 
 const useStyles = makeStyles((theme) => ({
@@ -50,14 +58,30 @@ const useStyles = makeStyles((theme) => ({
 export default function ClippedDrawer() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  var icons = [<Home />, <PhoneAndroid />, <Router />, <Shop />, <ShoppingCart />, <AccountBox />, <ContactSupport />]
-  var links = ['/', '/mobile', '/broadband', '/products', '/cart', '/profile', '/contactus']
-  const token = localStorage.getItem("profile");
-  console.log("Token",token)
-  var handleLogin=async(e)=>{
+  var icons = [<Home />, <PhoneAndroid />, <Router />, <Shop />, <ShoppingCart />, <AccountBox />, <ContactSupport />, <Payment />]
+  var links = ['/', '/mobile', '/broadband', '/products', '/cart', '/profile', '/contactus', '/payment']
+  
+  const token = JSON.parse(localStorage.getItem("profile"))?.token;
+  //console.log("Token",token)
+ /*var handleLogin=async(e)=>{
        e.preventDefault()
+       console.log(localStorage.getItem("profile"))
        await dispatch(login())
-  }
+  }*/
+  var googleSuccess=async (res) => {
+    const result = res?.profileObj;
+    const token = res?.tokenId;
+    
+    console.log("google response",result,"  ",token)
+    try {
+      await dispatch(googlesignin({_id:result.googleId,name:result.name,email:result.email,googleId:result.googleId}))
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const googleError = () => alert('Google Sign In was unsuccessful. Try again later');
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -80,7 +104,7 @@ export default function ClippedDrawer() {
         <Toolbar />
         <div className={classes.drawerContainer}>
           <List>
-            {['Home', 'Mobile', 'Broadband', 'Tech Products', 'My Cart', 'My Account', 'Contact Us'].map((text, index) => {
+            {['Home', 'Mobile', 'Broadband', 'Tech Products', 'My Cart', 'My Account', 'Contact Us', 'Payment'].map((text, index) => {
 
               return (
                 <Link className="tags" style={{ textDecoration: 'none', color: "black" }} to={links[index]}>
@@ -92,11 +116,34 @@ export default function ClippedDrawer() {
               )
 
             })}
-            <Link className="tags" style={{ textDecoration: 'none', color: "black" }} to='/' onClick={handleLogin}>
-                  <ListItem button key="login">
-                    <ListItemText primary="Log In" />
-                  </ListItem>
-                </Link>
+
+            {!token?<GoogleLogin
+            clientId="107969636236-navdrh3p4eil5r5hf4ifr6hi8kcn7grv.apps.googleusercontent.com"
+            render={(renderProps) => (
+              <Button
+              style={{marginLeft:"10px"}} 
+              color="primary" 
+              onClick={renderProps.onClick} 
+              startIcon={<Icon />}
+              variant="contained">
+                Google Sign In
+              </Button>
+                )}
+            onSuccess={googleSuccess}
+            onFailure={googleError}
+            cookiePolicy="single_host_origin"
+          />:
+          <Button
+              style={{marginLeft:"10px"}} 
+              color="primary" 
+              onClick={()=>{
+                dispatch({type:actiontypes.LOGOUT})
+                window.location.reload();
+              }} 
+              startIcon={<Icon />}
+              variant="contained">
+                Log out
+          </Button>}
           </List>
         </div>
       </Drawer>
@@ -104,3 +151,28 @@ export default function ClippedDrawer() {
     </div>
   );
 }
+ /*    
+        <Link className="tags" 
+        onClick={renderProps.onClick}>
+        disabled={renderProps.disabled} 
+        style={{ textDecoration: 'none', color: "black" }} 
+                  <ListItem button key="login">
+                    <ListItemText primary="Google LogIn" />
+                    <ListItemIcon><Icon /></ListItemIcon>
+                  </ListItem>
+            </Link>
+        
+        <Link className="tags" style={{ textDecoration: 'none', color: "black" }} to='/' onClick={handleLogin}>
+                  <ListItem button key="login">
+                    <ListItemText primary="Log In" />
+                    <ListItemIcon>{icons[index]}</ListItemIcon>
+                  </ListItem>
+            </Link>*/
+            /*  <Button className={classes.googleButton} 
+              color="primary" 
+              fullWidth onClick={renderProps.onClick} 
+              disabled={renderProps.disabled} 
+              startIcon={<Icon />} 
+              variant="contained">
+                Google Sign In
+              </Button>*/

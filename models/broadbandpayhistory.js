@@ -3,7 +3,7 @@ const {ObjectId} = mongoose.Schema;
 
 const broadbandpayhisSchema = new mongoose.Schema({
     userId : {
-        type : ObjectId,
+        type : String,
         ref: "User"
     },
     productId : {

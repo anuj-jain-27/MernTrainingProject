@@ -1,156 +1,96 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import SwipeableViews from 'react-swipeable-views';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Zoom from '@material-ui/core/Zoom';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import UpIcon from '@material-ui/icons/KeyboardArrowUp';
-import { green } from '@material-ui/core/colors';
-import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import { Container, AppBar, Typography, Grow, Grid } from '@material-ui/core';
+import useStyles from './mobilestyles';
+import Posts from "../Posts/Posts"
+import Form from "../Form/Form"
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {getdataconsump} from "../../actions/dataconsump";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import DataUsageMPlans from "../DataUsageMPlans";
+import { makeStyles } from '@material-ui/core/styles';
+import {getusers} from '../../actions/users';
+import Table from '../Table';
+import Scroll from "./Scroll";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import MobileCurrent from '../MobileCurrentPlan';
+import MPlansHistory from '../mplanshistory'
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
 
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`action-tabpanel-${index}`}
-      aria-labelledby={`action-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </Typography>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `action-tab-${index}`,
-    'aria-controls': `action-tabpanel-${index}`,
-  };
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    width: 500,
-    position: 'relative',
-    minHeight: 200,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-  },
-  fabGreen: {
-    color: theme.palette.common.white,
-    backgroundColor: green[500],
-    '&:hover': {
-      backgroundColor: green[600],
-    },
-  },
-}));
-
-export default function Mobile() {
+function Mobile() {
   const classes = useStyles();
-  const theme = useTheme();
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const posts = useSelector((state) => state.posts);
+  console.log(posts)
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (datas.length == 0)
+      dispatch(getdataconsump());
+  }, [dispatch])
+  const [currentId, setCurrentId] = useState(0);
+  const datas = useSelector((state) => state.datas);
+  const [value, setValue] = React.useState('move');
+  console.log(value)
+  const handleChange = (event) => {
+    setValue(event.target.value);
+    console.log(value)
   };
 
-  const handleChangeIndex = (index) => {
-    setValue(index);
-  };
+  console.log(datas)
+    return (
+      <Container maxWidth="lg">
+      <Scroll showBelow={50} />
+    <FormControl component="fieldset">
+   <RadioGroup row aria-label="page" name="page1" value={value} onChange={handleChange}>
+   <FormControlLabel value="view" control={<Radio color="primary" />} label="View Mobile Plan" />
+   <FormControlLabel value="add" control={<Radio color="primary" />} label="Add Current plans" />
+   <FormControlLabel value="prev" control={<Radio color="primary" />} label="View Recharge History " />
+   
+   </RadioGroup>
+   </FormControl>
+   <Typography>MOBILE PLANS</Typography>
+   {value==="view" ?
+         <>
+         <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
+             <Grid item xs={12} sm={6}>
+             <Table data={posts}/>
+             </Grid>
+             <Grid item xs={12} sm={6}>
+             <MobileCurrent/>
+             </Grid>
+           </Grid>
+           <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
+             <Grid item xs={12} sm={5}>
+             <Posts setCurrentId={setCurrentId}  currentId={currentId} />
+             </Grid>
+             <Grid style={{marginLeft:"5px"}}item xs={12} sm={6}>
+             <DataUsageMPlans/>
+             </Grid>
+           </Grid>
+           </>
+          : 
+          <>
+          {value==="add" ?
+          <>
+             <Form currentId={currentId} setCurrentId={setCurrentId} />
+            </>
+             :    <> {value==="prev" ?
+             <>
+                <><MPlansHistory/></> 
+               </>
+                :    <></> 
+             }</> 
+          }
+          </>
+     }
+       </Container>
+    )}
+    
+  
 
-  const transitionDuration = {
-    enter: theme.transitions.duration.enteringScreen,
-    exit: theme.transitions.duration.leavingScreen,
-  };
-
-  const fabs = [
-    {
-      color: 'primary',
-      className: classes.fab,
-      icon: <AddIcon />,
-      label: 'Add',
-    },
-    {
-      color: 'secondary',
-      className: classes.fab,
-      icon: <EditIcon />,
-      label: 'Edit',
-    },
-    {
-      color: 'inherit',
-      className: clsx(classes.fab, classes.fabGreen),
-      icon: <UpIcon />,
-      label: 'Expand',
-    },
-  ];
-
-  return (
-    <div className={classes.root}>
-      <AppBar position="static" color="default">
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="fullWidth"
-          aria-label="action tabs example"
-        >
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-        </Tabs>
-      </AppBar>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          Item One
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          Item Two
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          Item Three
-        </TabPanel>
-      </SwipeableViews>
-      {fabs.map((fab, index) => (
-        <Zoom
-          key={fab.color}
-          in={value === index}
-          timeout={transitionDuration}
-          style={{
-            transitionDelay: `${value === index ? transitionDuration.exit : 0}ms`,
-          }}
-          unmountOnExit
-        >
-          <Fab aria-label={fab.label} className={fab.className} color={fab.color}>
-            {fab.icon}
-          </Fab>
-        </Zoom>
-      ))}
-    </div>
-  );
-}
+  export default Mobile;

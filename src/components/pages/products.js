@@ -1,6 +1,9 @@
 import ProductCard from '../productcard/card'
 import { getProducts } from '../../actions/products';
+import { getCart } from '../../actions/cart';
+import {search} from '../../actions/searchproduct'
 import ProductForm from '../forms/productform'
+import Searchbar from '../searchbar'
 
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +13,10 @@ import { Grid, CircularProgress,Paper, Fab, Typography, Modal, Fade, Backdrop } 
 import { Add } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
-  modal: {
+  root: {
+    flexGrow: 1,
+  },
+   modal: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -23,12 +29,17 @@ const useStyles = makeStyles((theme) => ({
 
 function Product() {
   const products = useSelector((state) => state.products);
+  const searchResults = useSelector((state) => state.searchResultsProduct);
+  const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const classes = useStyles();
-
+  
   const [open, setOpen] = React.useState(false);
   const [selected,setselected]=useState(null)
+  const [searchtext,setSearchtext]=useState("")
+  
 
+  var profile = JSON.parse(localStorage.getItem("profile"));
   const handleAdd = () => {
     setOpen(true);
   };
@@ -38,22 +49,47 @@ function Product() {
   };
 
   useEffect(() => {
-    if (products.length == 0) {
+    if(profile)
+       dispatch(getCart(profile.user._id))
+    if(searchtext!=""){
+       dispatch(search(searchtext));
+    }else if (products.length == 0) {
       dispatch(getProducts());
       console.log("dispatching getProducts")
     }
-  }, [dispatch])
-
-  var prodjsx = products.map(prod => {
-    return <ProductCard prod={prod} role={0} setselected={setselected} setOpen={setOpen} />
+  }, [dispatch,searchtext])
+  console.log("role products: ",profile?.user?.role)
+  var res=[]
+  if(searchtext!='')
+     res=searchResults;
+  else
+     res=products;
+  var prodjsx = res.map(prod => {
+    var flag=true;
+    if(cart)
+    cart.forEach(p=>{
+       if(p.product._id==prod._id)
+         flag=false;
+    })
+    if(flag) 
+     return (<Grid container item lg={3} sm={6} xs={12} style={{ marginTop: "3px" }}> 
+              <ProductCard prod={prod} role={profile?profile.user.role:0} setselected={setselected} setOpen={setOpen} />
+            </Grid>)
+    else
+     return <></>
   });
-
+//justify="center" alignItems="center" alignContent="center" 
   return (
-    <div>
-      <Grid container justify="center" alignItems="center" alignContent="center" spacing={3}
-        style={{ marginTop: "5px" }}>
-        {products.length != 0 ? prodjsx : <CircularProgress />}
-      </Grid>
+    <div className={classes.root}>
+      <div style={{textAlign:"center",width:"100%",marginLeft:"30%",marginBottom:"10px"}}>
+      <Searchbar setSearchtext={setSearchtext}/>
+      </div>
+      <Grid container item lg={12} spacing={1} >
+      {
+      !(searchtext!=''&&res.length==0)?(products.length!=0)? prodjsx : <CircularProgress />
+      :
+      <Typography style={{marginBottom:"10px"}} color="secondary" variant="h6" align="center">Not Found</Typography>
+      }
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -66,15 +102,19 @@ function Product() {
           timeout: 500,
         }}
       >
+        
+       
         <Fade in={open}>
           <div className={classes.paper} style={{marginTop:"50px"}}>
                 <ProductForm selected={selected} handleClose={handleClose} setselected={setselected}/>
           </div>
         </Fade>
       </Modal>
-      <Fab color="primary" aria-label="add" size="large" style={{ position: "fixed", bottom: "10px", right: "10px" }}>
+      
+     { profile?.user?.role==1?(<Fab color="primary" aria-label="add" size="large" style={{ position: "fixed", bottom: "10px", right: "10px" }}>
         <Add onClick={handleAdd} />
-      </Fab>
+      </Fab>):null}
+    </Grid>
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import {CREATEORDER,GETUSERORDERS} from '../constants/actionTypes';
 import * as api from '../api/index.js';
 
-export const placeOrder = (userid,order) => async (dispatch) => {
+export const placeOrder = (cardid,userid,order) => async (dispatch) => {
     try {
-      const { data } = await api.createOrder(userid,order);
+      const { data } = await api.createOrder(cardid,userid,order);
       console.log("createorder")
       dispatch({ type: CREATEORDER, payload: data });
     } catch (error) {
@@ -11,10 +11,10 @@ export const placeOrder = (userid,order) => async (dispatch) => {
     }
 };
 
-export const getUserOrders = () => async (dispatch) => {
+export const getUserOrders = (userid) => async (dispatch) => {
     try {
-      const { data } = await api.fetchUserOrders();
-      console.log("getproduts")
+      const { data } = await api.fetchUserOrders(userid);
+      console.log("getuserorders")
       dispatch({ type: GETUSERORDERS, payload: data });
     } catch (error) {
       console.log(error);

@@ -5,7 +5,7 @@ export default (orders = [], action) => {
     case GETUSERORDERS:
       return action.payload;
     case CREATEORDER:
-      return [...orders, action.payload];
+      return [action.payload,...orders];
     default:
       return orders;
   }
