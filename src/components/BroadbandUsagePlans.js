@@ -199,7 +199,7 @@ function BroadbandMUsagePlans() {
 </Container>
 </>
   ));
-  };
+  }
      
   
   export default BroadbandMUsagePlans;
