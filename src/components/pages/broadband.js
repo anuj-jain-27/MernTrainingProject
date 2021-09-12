@@ -26,6 +26,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import BPlansHistory from '../bplanshistory';
+import broadbandpic from '../../images/Broadband.png';
 
 
 
@@ -35,6 +36,7 @@ function Broadband() {
   const dispatch = useDispatch();
   const [currentId_broadband, setCurrentId_broadband] = useState(0);
   const [currentId_blocation, setCurrentId_blocation] = useState(0);
+  const [BUpgrade, setBUpgrade] = useState(true);
   const [value, setValue] = React.useState('move');
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -85,28 +87,28 @@ function Broadband() {
       {value==="view" ?
          <>
           <>
-         
          <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
-             <Grid item xs={12} sm={7}>
+            <Grid item xs={12} sm={12} md={6}>
              <Table_broadband data={broadbands} />
              </Grid>
-             <Grid item xs={12} sm={5}>
-             <BroadbandCurrent/>
+             <Grid item xs={12} sm={8} md={6}>
+             <BroadbandCurrent BUpgrade={BUpgrade} setBUpgrade={setBUpgrade}/>
              </Grid>
              </Grid>
           
       
            <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
-             <Grid item xs={12} sm={6}>
+             <Grid item xs={12} sm={8} md={6}>
              <BPosts currentId_broadband={currentId_broadband}  setCurrentId_broadband={setCurrentId_broadband} searchterm={searchterm} />
              </Grid>
-             <Grid item xs={12} sm={6}>
+             <Grid item  xs={12} sm={6} md={6}>
              <BroadbandMUsagePlans/>
-             </Grid>
+             <Typography style={{marginTop:"20px"}}>SEARCH PLAN BASED ON SUBURBS, CITIES, STATES</Typography>
+              <Searchbar searchterm={searchterm} setSearch={setSearchterm}  />
+              <Blocations style={{marginTop:"20px"}} currentId_blocation={currentId_blocation} setCurrentId_blocation={setCurrentId_blocation} searchterm={searchterm} />
+                </Grid>
            </Grid>
-           <Typography>SEARCH PLAN BASED ON SUBURBS, CITIES, STATES</Typography>
-           <Searchbar searchterm={searchterm} setSearch={setSearchterm}  />
-           <Blocations currentId_blocation={currentId_blocation} setCurrentId_blocation={setCurrentId_blocation} searchterm={searchterm} />
+          
            </>
            </>
           : 
@@ -119,11 +121,12 @@ function Broadband() {
              <>
                 <><BPlansHistory/></> 
                </>
-                :    <></> 
+                :    <><img height='400px' width="900px" marginLeft="2px" src={broadbandpic} align="center" align="left"></img></> 
              }</> 
           }
           </>
      }
+     
        </Container>
     )}
     

@@ -116,6 +116,14 @@ export const updatebroadband = (id, userid, bpost) => axios({
  
 });
 
+export const upgradeBroadbandPlan = (details, cardid, userid) => axios({
+  method:"post",
+  url:`http://localhost:8000/api/renewupgradebroadband/${cardid}/${userid}`,
+  data:details,
+  headers: { "Content-Type": "application/json","Authorization": `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`},
+  
+});
+
 export const getCurrentBroadbandPlan=(userid) => axios({
   method:"get",
   url:`http://localhost:8000/api/broadband/user/${userid}`,

@@ -20,7 +20,8 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import MobileCurrent from '../MobileCurrentPlan';
-import MPlansHistory from '../mplanshistory'
+import MPlansHistory from '../mplanshistory';
+import mobilepic from '../../images/mobileplans.png';
 
 
 function Mobile() {
@@ -50,25 +51,24 @@ function Mobile() {
    <FormControlLabel value="view" control={<Radio color="primary" />} label="View Mobile Plan" />
    <FormControlLabel value="add" control={<Radio color="primary" />} label="Add Current plans" />
    <FormControlLabel value="prev" control={<Radio color="primary" />} label="View Recharge History " />
-   
    </RadioGroup>
    </FormControl>
    <Typography>MOBILE PLANS</Typography>
    {value==="view" ?
          <>
          <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
-             <Grid item xs={12} sm={6}>
+             <Grid item xs={12} sm={12} md={6}>
              <Table data={posts}/>
              </Grid>
-             <Grid item xs={12} sm={6}>
+             <Grid item xs={12} sm={12} md={6}>
              <MobileCurrent/>
              </Grid>
            </Grid>
-           <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
-             <Grid item xs={12} sm={5}>
+           <Grid  container justify="space-between" alignItems="start" style={{marginTop:"20px", marginBottom:"20px"}}  spacing={1}>
+             <Grid item xs={12} sm={8} md={6} >
              <Posts setCurrentId={setCurrentId}  currentId={currentId} />
              </Grid>
-             <Grid style={{marginLeft:"5px"}}item xs={12} sm={6}>
+             <Grid item xs={12} sm={12} md={6}>
              <DataUsageMPlans/>
              </Grid>
            </Grid>
@@ -83,11 +83,12 @@ function Mobile() {
              <>
                 <><MPlansHistory/></> 
                </>
-                :    <></> 
+                :    <> <img height='400px' width="900px" marginLeft="2px" src={mobilepic} align="center" align="left"></img></> 
              }</> 
           }
           </>
      }
+     
        </Container>
     )}
     

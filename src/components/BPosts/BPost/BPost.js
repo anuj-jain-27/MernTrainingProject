@@ -22,6 +22,9 @@ import CloseIcon from '@material-ui/icons/Cancel';
 import { deletebroadband } from '../../../actions/broadband'
 import BroadbandForm from '../../Form/Broadbandform';
 import {BrowserRouter as Router,Switch,Route,Link} from "react-router-dom";
+import Googlemodal from '../../googleauth/googlemodal';
+import PaymentModal from '../../pages/paymentmodal';
+
 
 const BootstrapButton = withStyles({
   root: {
@@ -80,23 +83,44 @@ const useStyles_3 = makeStyles((theme) => ({
     padding: theme.spacing(2, 4, 3),
   },
 }));
+const useStyles_2 = makeStyles((theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+}));
 
-const BPost = ({ broadband, currentId_broadband, setCurrentId_broadband}) => {
+const BPost = ({setSnackBarMsg, broadband, currentId_broadband, setCurrentId_broadband}) => {
   const dispatch = useDispatch();
   const classes = useStyles(); 
   const classes_1 = useStyles_3(); 
+  const classes_2 = useStyles_2();
   const [open, setOpen] = React.useState(false);
   const[Bactivated, setBactivated]=React.useState(0);
   const[Bstate, setBstate]=React.useState(false);
   const details = localStorage.getItem("profile");
-  //console.log(JSON.parse(localStorage.getItem('profile')).user._id)
+  const [modal, setModal]=useState(false)
+  const [open_pay, setOpen_Pay] = React.useState(false);
 
-  var user=JSON.parse(localStorage.getItem('profile')).user._id
+  var profile=JSON.parse(localStorage.getItem('profile'))
+  var user= profile?.user?._id
   const broadbandtocard= () => {
+    if(!profile){
+      setModal(true)
+    }
+    else{
+    setOpen_Pay(true)
     setBactivated(broadband._id)
     localStorage.setItem('broadband',JSON.stringify(broadband));
     setBstate(true)
-  };
+  }};
   
   console.log(Bactivated)
   const handleOpen = () => {
@@ -106,20 +130,22 @@ const BPost = ({ broadband, currentId_broadband, setCurrentId_broadband}) => {
   const handleClose = () => {
     setOpen(false);
   };
+  const handleClose_Pay = () => {
+    setOpen_Pay(false);
+  };
   const handleDelete_broadband=async ()=>{
       await dispatch(deletebroadband(user, broadband._id))
+      setSnackBarMsg({ message: "Plan deleted sucessfully", severity: "success" })
   }
  
   return (
     <Card className={classes.card}>
-    <div className={classes.overlay2}>
-    </div>
-    <div className={classes.details}>
-    </div>
-    <Typography className={classes.title} gutterBottom variant="h7" component="h4">Plan - {broadband.name}</Typography>
-<Typography className={classes.title} gutterBottom variant="h7" component="h4">Price - {broadband.monthlyprice}/month</Typography>
+      <div className={classes.colorblock}>
+    <Typography className={classes.title} gutterBottom variant="h7" style={{marginTop:"5px"}} component="h4"> {broadband.name}</Typography>
+<Typography className={classes.title} gutterBottom variant="h7" component="h4">Price - {broadband.monthlyprice}</Typography>
+</div>
     <CardContent style={{top:"-20px"}}>
-    <Line color="#3f51b5"/>
+    {/* <Line color="#3f51b5"/> */}
     <Typography variant="body2" color="textSecondary" component="p">Type - {broadband.plantype} GB</Typography>
     <Typography variant="body2" color="textSecondary" component="p">validity - {broadband.validity}/ Day</Typography>
     <Typography variant="body2" color="textSecondary" component="p">Data - {broadband.data}</Typography>
@@ -128,15 +154,18 @@ const BPost = ({ broadband, currentId_broadband, setCurrentId_broadband}) => {
      {/* <Typography variant="body2" color="textSecondary" component="p">PlanPerks - {broadband.planperks.name} {broadband.planperks.description}</Typography> */}
     </CardContent>
     <CardActions className={classes.cardActions}>
+    {profile?.user?.role===1?<>
     <Button
     variant="contained"
     color="secondary"
     style={{maxWidth: '40px', maxHeight: '30px', minWidth: '40px', minHeight: '30px', marginTop: "30px", paddingRight:"5px"}}
     onClick={handleDelete_broadband}
     className={classes.button}
-    startIcon={<DeleteIcon style={{justifyContent:"center"}} />}
-  >
-  </Button>
+    startIcon={<DeleteIcon style={{justifyContent:"center"}} />}>
+    </Button></>:<></>}
+
+  {profile?.user?.role===1?
+  <>
   <ColorButton
     variant="contained"
     color="primary"
@@ -164,17 +193,43 @@ const BPost = ({ broadband, currentId_broadband, setCurrentId_broadband}) => {
           </div>
         </Fade>
       </Modal>
+      </>:<></>}
+    {
+     <>
   <Button
     variant="contained"
     color="primary"
-    href="/Payment"
+    // href="/Payment"
     style={{maxWidth: '40px', maxHeight: '30px', minWidth: '40px', minHeight: '30px', marginTop: "30px", paddingRight:"5px"}}
     onClick={broadbandtocard}
     className={classes.button}
-    startIcon={<ShoppingCartIcon style={{justifyContent:"center"}} />}
+    startIcon={<ShoppingCartIcon style={{justifyContent:"center"}}
+     />}
   >
   </Button>
+   <Modal
+   aria-labelledby="transition-modal-title"
+   aria-describedby="transition-modal-description"
+   className={classes_2.modal}
+   open={open_pay}
+   onClose={handleClose_Pay}
+   closeAfterTransition
+   BackdropComponent={Backdrop}
+   BackdropProps={{
+     timeout: 500,
+   }}
+ >
+   <Fade in={open_pay}>
+   <div>
+    <Button style={{ marginLeft: "auto"}}  className={classes.logButton} endIcon={<CloseIcon />}  variant="contained" color="secondary" size="small" fontSize="small" onClick={handleClose_Pay}>Close</Button>
+    <PaymentModal />
+    </div>
+   </Fade>
+ </Modal>
+ </>
+  }
     </CardActions>
+    <Googlemodal open={modal} setOpen={setModal}/>
   </Card>
   );
 };

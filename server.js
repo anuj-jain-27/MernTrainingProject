@@ -6,7 +6,12 @@ mongoose.connect('mongodb+srv://AnushaMadan:Madan1204@cluster0.k0byf.mongodb.net
     useNewUrlParser: true, 
     useUnifiedTopology: true, 
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    
+ 
+    // reconnectTries: 60,
+    // reconnectInterval: 1000,
+    // keepAlive: true,
 }).then(()=>{
     console.log("DATABASE CONNECTED");
         app.listen(8000,()=>{

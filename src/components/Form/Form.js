@@ -6,11 +6,13 @@ import useStyles from './styles';
 import { createPost, updatePost } from '../../actions/posts';
 import { Container, AppBar, Grow, Grid } from '@material-ui/core';
 import {getplans} from "../../actions/plancart";
+import Snackbar from '../notifications/snackbar'
 
 
     const Form = ({currentId, setCurrentId}) => {
       const [postData, setPostData] = useState({ plan: '', validity: '', data: '', SMS: '', cost: ''});
       const post = useSelector((state) => (currentId ? state.posts.find((message) => message._id === currentId) : null));
+      const [snackBarMsg, setSnackBarMsg] = useState(null)
       const dispatch = useDispatch();
       const classes = useStyles();
       useEffect(() => {
@@ -25,8 +27,9 @@ import {getplans} from "../../actions/plancart";
         if (post) setPostData(post);
       }, [post]);
       const details = localStorage.getItem("profile");
+     
       //console.log(JSON.parse(localStorage.getItem('profile')).user._id)
-      var user=JSON.parse(localStorage.getItem('profile')).user._id
+      var profile=JSON.parse(localStorage.getItem('profile'))
       const clear = () => {
         setCurrentId(0);
         setPostData({ plan: '', validity: '', data: '', SMS: '', cost: '' });
@@ -36,10 +39,12 @@ import {getplans} from "../../actions/plancart";
         e.preventDefault();
     
         if (currentId === 0) {
-          dispatch(createPost(user, postData));
+          dispatch(createPost(profile?.user?._id, postData));
+          setSnackBarMsg({ message: "MobilePlan added successfully", severity: "success" })
           clear();
         } else {
-          dispatch(updatePost(user, currentId, postData));
+          dispatch(updatePost(profile?.user?._id, currentId, postData));
+          setSnackBarMsg({ message: "Mobile Plan updated successfully", severity: "success" })
           clear();
         }
       };
@@ -61,7 +66,9 @@ import {getplans} from "../../actions/plancart";
         </Paper>
         </Container>
 </Grow>
+{snackBarMsg ? <Snackbar snackBarMsg={snackBarMsg} setSnackBarMsg={setSnackBarMsg} /> : null}
 </Container>
+
       );
     };
     

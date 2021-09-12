@@ -20,7 +20,6 @@ export default makeStyles({
     justifyContent: 'center',
     justifyItems:"center",
     borderRadius: '15px',
-    height: '100%',
     width:"100%",
     width:"200px",
     position: 'relative',
@@ -43,7 +42,6 @@ export default makeStyles({
   details: {
     display: 'flex',
     justifyContent: 'space-between',
-    margin: '20px',
   },
   title: {
     padding: '0 16px',
@@ -51,7 +49,17 @@ export default makeStyles({
   cardActions: {
     flexDirection: 'row',
     justifyContent: "center",
-    alignItems:"space-between",
+    alignItems:"top",
+  },
+  colorblock: {
+    backgroundColor:"#203354",
+    color: '#fff',
+  },
+  logButton:{
+    display: 'flex',
+    fontSize:"10px",
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
   },
  
 });

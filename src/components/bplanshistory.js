@@ -7,10 +7,10 @@ import BPlan from "../components/BPosts/BPost/BPlan"
 
 const BPlansHistory= () => {
   const dispatch = useDispatch();
-  var user=JSON.parse(localStorage.getItem('profile')).user._id
+  var user=JSON.parse(localStorage.getItem('profile'))
   useEffect(() => {
     if (broadbandhistory.length == 0)
-      dispatch(getbroadbandhistory(user));
+      dispatch(getbroadbandhistory(user?.user?._id));
   }, [dispatch])
 
   const broadbandhistory = useSelector((state) => state.broadbandhistory);
@@ -19,7 +19,7 @@ const BPlansHistory= () => {
   const classes = useStyles();
 
   return  (
-    broadbandhistory.length==0 ? <CircularProgress /> : (
+    broadbandhistory.length==0 ?<> </> : (
       <Grid className={classes.container} container alignItems="stretch" spacing={3}>
         {broadbandhistory.map((broadbandhis) => (
         <Grid key={broadbandhis._id} item xs={12} sm={6} md={3}>

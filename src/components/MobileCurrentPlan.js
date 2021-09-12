@@ -1,7 +1,7 @@
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import { Container, AppBar, Typography, Grow, Grid } from '@material-ui/core';
+import { Container, AppBar, Typography, Grow, Grid, Button } from '@material-ui/core';
 import useStyles from './pages/mobilestyles';
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +20,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Plan from './Posts/Post/Plan';
 import { getbroadbands } from '../actions/broadband';
+import {getplanbyid} from "../actions/plancart";
 
 const useStyles_1 = makeStyles((theme) => ({
   formControl: {
@@ -45,6 +46,16 @@ const useStyles_2 = makeStyles((theme) => ({
 function MobileCurrent() {
   const classes_1=useStyles_1
   const [currentValue, setCurrentValue] = useState(0);
+  const dispatch = useDispatch();
+  var profile=JSON.parse(localStorage.getItem('profile'))
+  var user=profile?.user?._id
+  useEffect(() => {
+    if (planuser.length == 0)
+      dispatch(getplanbyid(user));
+  }, [dispatch])
+  const planuser = useSelector((state) => state.planuser);
+  console.log(planuser)
+
   const [state_start, setState_start] = React.useState({
     age: '',
     name: 'hai',
@@ -53,7 +64,7 @@ function MobileCurrent() {
     age: '',
     name: 'hai',
   });
-  const dispatch = useDispatch();
+  
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -70,13 +81,7 @@ function MobileCurrent() {
       dispatch(getplans());
   }, [dispatch])
 
-  useEffect(() => {
-    if (broadbands.length == 0)
-      dispatch(getbroadbands());
-  }, [dispatch])
 
-  const broadbands = useSelector((state) => state.broadbands);
-  console.log(broadbands)
   const plans = useSelector((state) => state.plans);
   console.log(plans)
   const posts = useSelector((state) => state.posts);
@@ -97,15 +102,13 @@ function MobileCurrent() {
   };
   var startingdata=state_start.start;
   var endingdata=state_end.end;
-  var Total_Consumption=0;
+  var Total_Consumption=34;
   for(var i=parseInt(startingdata); i<= parseInt(endingdata); i++){
       Total_Consumption=Total_Consumption+datas[i].dc
   }
   const classes = useStyles();
-
-
     return (
-     ( datas.length ==0 || broadbands.length ==0?<CircularProgress />:
+     ( datas.length==0 ||  planuser.length ==0 ?<></>:
       <>
       <Container maxWidth="lg">
         <Grow in>
@@ -113,19 +116,21 @@ function MobileCurrent() {
         <Grid container  justify="space-between" alignItems="stretch" spacing={3}>
         <Card className={classes.root} style={{marginBottom:"5px"}} variant="outlined">
         <CardContent>
-        <Typography className={classes.title} color="textSecondary" gutterBottom>
+        <div style={{padding:"10px", backgroundColor:"#8cd2e8"}}>
+        <Typography  style={{ fontWeight:"fontWeightBold"}} className={classes.title} color="textSecondary" gutterBottom>
         MY CURRENT MOBILE PLAN
         </Typography>
-        <Typography className={classes.title} gutterBottom variant="h7" component="h5">Plan - Rs {plans[plans.length-1].plan} </Typography>
-        <Typography className={classes.title} gutterBottom variant="h7" component="h5">Validity -{plans[plans.length-1].validity} Days</Typography>
-        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Data - {plans[plans.length-1].data} GB</Typography>
-        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">MS- Rs {plans[plans.length-1].SMS}/Day</Typography>
-        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Cost- Rs {plans[plans.length-1].cost}</Typography>
-        <Typography className={classes.title} gutterBottom variant="h7" component="h6">TOTAL - {plans[plans.length-1].data}</Typography>
+        <Typography className={classes.title} gutterBottom variant="h7" component="h5">Plan - Rs {plans[plans.length-1]?.plan} </Typography>
+        <Typography className={classes.title} gutterBottom variant="h7" component="h5">Validity -{plans[plans.length-1]?.validity} Days</Typography>
+        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Data - {plans[plans.length-1]?.data} GB</Typography>
+        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">SMS- Rs {plans[plans.length-1]?.SMS}/Day</Typography>
+        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Cost- Rs {plans[plans.length-1]?.cost}</Typography>
+        </div>
+        <div style={{padding:"10px", backgroundColor:"#203354", color:"white"}}>
+        <Typography className={classes.title} gutterBottom variant="h7" component="h6">TOTAL - {plans[plans.length-1]?.data}</Typography>
         <Typography className={classes.title} gutterBottom variant="h7" component="h6">TOTAL USED - {Total_Consumption}</Typography>
-        <Typography className={classes.title} gutterBottom variant="h7" component="h6">BALANCE - {plans[plans.length-1].data-Total_Consumption}</Typography>
-        <Typography className={classes.title} color="textSecondary" gutterBottom>
-        </Typography>
+        <Typography className={classes.title} gutterBottom variant="h7" component="h6">BALANCE - {plans[plans.length-1]?.data-Total_Consumption}</Typography>
+        </div>
         </CardContent>
         <CardActions>
         </CardActions>

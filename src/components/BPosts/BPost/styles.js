@@ -20,8 +20,8 @@ export default makeStyles({
     justifyContent: 'center',
     justifyItems:"center",
     borderRadius: '15px',
-    height: '100%',
     width:"100%",
+    height:"100%",
     width:"200px",
     position: 'relative',
   },
@@ -52,5 +52,10 @@ export default makeStyles({
     padding: '0 16px 8px 16px',
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  colorblock: {
+    backgroundColor:"#203354",
+    color: '#fff',
+    
   },
 });

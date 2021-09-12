@@ -20,6 +20,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Plan from './Posts/Post/Plan';
 import { getbroadbands } from '../actions/broadband';
+import Line from "./Line"
 
 const useStyles_1 = makeStyles((theme) => ({
   formControl: {
@@ -109,7 +110,7 @@ function BroadbandMUsagePlans() {
 
 
     return (
-     ( datas.length ==0 || broadbands.length ==0?<CircularProgress />:
+     ( datas.length ==0 || broadbands.length ==0?<></>:
       <>
       <Container maxWidth="lg">
         <Grow in>
@@ -187,6 +188,11 @@ function BroadbandMUsagePlans() {
       </FormControl>
       </div>
       BROADBAND CONSUMPTION : {Total_Consumption}
+      <Line color="#3f51b5"/>
+      <Typography style={{marginTop:"10px"}} className={classes.title} color="textSecondary" gutterBottom> Last 3 Days consumption</Typography>
+      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 16-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-1].dc} GB</span></div>
+      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 15-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-2].dc} GB</span></div>
+      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 14-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-3].dc} GB</span></div>
       </div>
         </CardContent>
         <CardActions>

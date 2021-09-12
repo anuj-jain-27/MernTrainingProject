@@ -4,7 +4,7 @@ const Line = ({ color }) => (
       style={{
           color: color,
           backgroundColor: color,
-          height: 1
+          height: 2
       }}
   />
 );

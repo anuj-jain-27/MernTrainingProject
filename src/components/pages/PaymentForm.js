@@ -1,12 +1,12 @@
 import React from "react";
-import { Button, Form, Alert, Row, Col } from "react-bootstrap";
+import { Button, Form, Alert, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./PaymentForm.css";
 import "react-credit-cards/es/styles-compiled.css";
 import validateInfo from './validateInfo';
 import { useState } from 'react'
 import pic from '../../images/cards.png';
-import { TextField,Typography, Paper } from '@material-ui/core';
+import {Typography } from '@material-ui/core';
 import { createCard } from "../../actions/payment"
 import { useDispatch, useSelector } from 'react-redux';
 const PaymentForm = () => {
@@ -16,7 +16,6 @@ const PaymentForm = () => {
     cardtype: '',
     expirydate: '',
     cardsecuritycode: '',
-   
 })
 
 const [errors, setErrors] = useState({})
@@ -41,11 +40,7 @@ const handleSubmit = e => {
 
   return (
     <div>
-      <div className="container">
-        <div className="box justify-content-center align-items-center">
           <div className="formDiv">
-          <div className="creditCard">
-          </div>
           <Form onSubmit={handleSubmit}>
             <Form.Group>
             <Typography> Add Card details</Typography>
@@ -112,8 +107,7 @@ const handleSubmit = e => {
             {errors.message}
           </Alert>{" "}
         </div>
-      </div>
-    </div>
+
   );
 };
 

@@ -21,5 +21,11 @@ export default makeStyles((theme) => ({
   buttonSubmit: {
     marginBottom: 10,
   },
+  logButton:{
+    display: 'flex',
+    fontSize:"10px",
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+  },
   
 }));

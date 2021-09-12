@@ -5,10 +5,12 @@ import useStyles from './styles';
 import { createBroadbandPlan, updatebroadband } from "../../actions/broadband"
 import { Container } from '@material-ui/core';
 import { Grow} from '@material-ui/core';
+import Snackbar from '../notifications/snackbar'
 
     const BroadbandForm = ({currentId_broadband, setCurrentId_broadband}) => {
       const [bpostData, setBPostData] = useState({ name:"", monthlyprice:"", plantype:"", validity:"", data:"", uploadspeed:"", downloadspeed:"", speed:"",  installationcharges:""});
       const bpost = useSelector((state) => (currentId_broadband? state.broadbands.find((message) => message._id === currentId_broadband) : null));
+      const [snackBarMsg, setSnackBarMsg] = useState(null)
       const dispatch = useDispatch();
       const classes = useStyles();
     
@@ -20,16 +22,19 @@ import { Grow} from '@material-ui/core';
         setCurrentId_broadband(0);
         setBPostData({name:"", monthlyprice:"", plantype:"", validity:"", data:"", uploadspeed:"", downloadspeed:"", speed:"",  installationcharges:""});
       };
-      var user=JSON.parse(localStorage.getItem('profile')).user._id
+      var profile=JSON.parse(localStorage.getItem('profile'))
+      var user= profile?.user?._id
       console.log(user)
       const handleSubmit = async (e) => {
         e.preventDefault();
     
         if (currentId_broadband === 0) {
           dispatch(createBroadbandPlan(user, bpostData));
+          setSnackBarMsg({ message: "Broadband Plan added successfully", severity: "success" })
           clear();
         } else {
           dispatch(updatebroadband(user, currentId_broadband, bpostData));
+          setSnackBarMsg({ message: "Broadband Plan updated successfully", severity: "success" })
           clear();
         }
       };
@@ -55,6 +60,7 @@ import { Grow} from '@material-ui/core';
         </Paper>
         </Container>
 </Grow>
+{snackBarMsg ? <Snackbar snackBarMsg={snackBarMsg} setSnackBarMsg={setSnackBarMsg} /> : null}
 </Container>
       );
     };

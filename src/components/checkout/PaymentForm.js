@@ -40,7 +40,7 @@ export default function PaymentForm({setpayment,payment}) {
     if(cardIndex!=-1)
       setpayment({...cards[cardIndex]})
   };
- 
+  console.log(cardIndex)
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>

@@ -8,7 +8,8 @@ import Plan from "../components/Posts/Post/Plan"
 
 const MPlansHistory= () => {
   const dispatch = useDispatch();
-  var user=JSON.parse(localStorage.getItem('profile')).user._id
+  var profile=JSON.parse(localStorage.getItem('profile'))
+  var user= profile?.user?._id
   useEffect(() => {
     if (plans.length == 0)
       dispatch(getplans());
@@ -27,7 +28,7 @@ const MPlansHistory= () => {
   const classes = useStyles();
 
   return  (
-    planuser.length==0 ? <CircularProgress /> : (
+    planuser.length==0 ? <></> : (
       <Grid className={classes.container} container alignItems="stretch" spacing={3}>
         {planuser.map((plan) => (
           <Grid key={plan._id} item xs={12} sm={6} md={3}>

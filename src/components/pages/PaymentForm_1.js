@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Paper } from '@material-ui/core';
+import { TextField, Button, Typography,MenuItem,Paper } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import useStyles from '../Form/styles';
 import { createPost, updatePost } from '../../actions/posts';
@@ -11,6 +11,21 @@ import pic from '../../images/cards.png';
 import { mobileplanpay } from '../../actions/paymentgateway';
 import {broadbandpay} from '../../actions/paymentgateway';
 import {getcards} from '../../actions/payment';
+import { upgradeBroadbandPlan } from '../../actions/broadbandupgrade';
+import {InputLabel,FormHelperText,FormControl,Select} from '@material-ui/core';
+import useStyles_1 from "./styles";
+import axios from 'axios';
+
+const useStyles_form = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
+
 const BootstrapButton = withStyles({
     root: {
       boxShadow: 'none',
@@ -54,24 +69,27 @@ const BootstrapButton = withStyles({
       },
     },
   }))(Button);
-function PaymentForm_1() {
+function PaymentForm_1(clicked) {
     const [paydetails, setPayDetails] = useState({});
-   
+    const currentbroadband = useSelector((state) => state.currentbroadband);
     const dispatch = useDispatch();
     const classes = useStyles();
+    const classes_form = useStyles_form();
     var TotalCost=0;
     const plansMobile = JSON.parse(localStorage.getItem("mobileplan"));
     const broadband = JSON.parse(localStorage.getItem("broadband"));
-    var user=JSON.parse(localStorage.getItem('profile')).user._id
-    
+    console.log(currentbroadband[currentbroadband.length-1])
+    console.log(broadband)
+    let broadbandUpgradeDetails = {newplan:broadband, currentplan:currentbroadband[currentbroadband.length-1], address: paydetails.Address, cvv:paydetails.CVV};
+   console.log(broadbandUpgradeDetails)
+    var profile=JSON.parse(localStorage.getItem('profile'))
     const [cardID, setCardId] = useState({});
+    const [cardIndex, setCardIndex] = useState(-1);
     useEffect(() => {
       if (cards.length == 0)
-        dispatch(getcards(user));
+        dispatch(getcards(profile?.user?._id));
     }, [dispatch])
     const cards = useSelector((state) => state.cards);
-    console.log(cards)
-    console.log(cardID)
     if(plansMobile!=null){
       TotalCost=TotalCost+parseInt(plansMobile.cost)
     }
@@ -79,8 +97,16 @@ function PaymentForm_1() {
       TotalCost=TotalCost+parseInt(broadband.monthlyprice)
     }
    
+   
+    const[CardNumber, setCardNumber]=useState("")
+    const handleChange = (event) => {
+      setCardNumber(event.target.value)
+      setPayDetails({ ...paydetails, CardNumber: event.target.value })
+    };
+    console.log(CardNumber)
     console.log(paydetails)
-    console.log(cardID)
+    console.log(clicked.clicked.clicked)
+    var stat=clicked.clicked.clicked
     const handleSubmit = e => {
       e.preventDefault()
       for (var i=0; i<cards.length;i++) {
@@ -88,16 +114,16 @@ function PaymentForm_1() {
           setCardId(cards[i]._id)
         }
       }
-      if(broadband!=null){
-        dispatch(broadbandpay(paydetails, broadband._id, cardID, user))
-        
+      console.log(cardID)
+      if (broadband!=null && stat===true){
+        dispatch(upgradeBroadbandPlan(broadbandUpgradeDetails,cardID, profile?.user?._id));
+      }
+      if(broadband!=null && stat!==true){
+        dispatch(broadbandpay(paydetails, broadband._id, cardID, profile?.user?._id))
       }
       if(plansMobile!=null){
-            dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, user));
-           
+            dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, profile?.user?._id));
           }
-            
-          
           //  if (plansMobile._id != " " && broadbandpay._id!=" ") {
           //    dispatch(mobileplanpay(paydetails, plansMobile._id,cardID, user));
           //    dispatch(broadbandpay(paydetails, plansMobile._id,cardID,  user))
@@ -117,27 +143,44 @@ function PaymentForm_1() {
           //      localStorage.setItem("broadband", "");
           //    }};
         };
+      
     return (
-    <Container maxWidth="lg">
-                <Container maxWidth="lg">
-        <Grow in>
-          <Container>
+ <div>
         <Paper className={classes.paper}>
           <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit} >
           <Typography> Payment Confirmation</Typography>
             <img height='40px' width="200px" marginLeft="2px" src={pic} align="center" align="left"></img>
-          <Typography variant="h8"></Typography>
-            <TextField style={{margin:"10px"}} size="small" name="CardNumber" variant="outlined" label="Card Number" fullWidth value={paydetails.CardNumber} onChange={(e) => setPayDetails({ ...paydetails, CardNumber: e.target.value })}/>
+            <TextField
+          id="outlined-select-position-native"
+          name="Card Number"
+          select
+          size="small" 
+          value={paydetails.CardNumber}
+          fullWidth
+          onChange={handleChange}
+          SelectProps={{
+            native: true,
+          }}
+          variant="outlined"
+        >
+          {cards.map((card) => (
+            <option key={card.value} value={card.value}>
+              {card.cardnumber}
+            </option>
+          ))}
+          </TextField>
+     
+  
+            {/* <TextField style={{margin:"10px"}} size="small" name="CardNumber" variant="outlined" label="Card Number" fullWidth value={paydetails.CardNumber} onChange={(e) => setPayDetails({ ...paydetails, CardNumber: e.target.value })}/> */}
             <TextField style={{margin:"10px"}} size="small" name="CVV" variant="outlined" label="CVV" fullWidth value={paydetails.CVV} onChange={(e) => setPayDetails({ ...paydetails, CVV: e.target.value })} />
             <TextField style={{margin:"10px"}} size="small" name="Address" variant="outlined" label="Address" fullWidth value={paydetails.Address} onChange={(e) => setPayDetails({ ...paydetails, Address: e.target.value })} />
             <Typography>Total Payment: {TotalCost}</Typography>
             <ColorButton  size="small" className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth>CONFIRM PAYMENT</ColorButton>
           </form>
         </Paper>
-        </Container>
-</Grow>
-</Container>
-    </Container>
+     
+    </div>
+
     );
   }
   

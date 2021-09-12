@@ -7,12 +7,10 @@ export const FETCHPRODUCTS = 'FETCHPRODUCTS';
 //ORDERS
 export const CREATEORDER="CREATEORDER";
 export const GETUSERORDERS="GETUSERORDERS";
-
 //Auth
 export const LOGOUT="LOGOUT"
 export const AUTH="AUTH"
 export const GOOGLEAUTH="GOOGLEAUTH"
-
 //mobileplans and broadband
 export const CREATE = 'CREATE';
 export const UPDATE = 'UPDATE';
@@ -35,15 +33,9 @@ export const GET_CURRENT_BROADBAND="GET_CURRENT_BROADBAND";
 export const SEARCH="SEARCH";
 export const GET_BROADBAND_HIS="GET_BROADBAND_HIS";
 export const GET_PLAN_BYID="GET_PLAN_BYID";
-
-
-
-
-
-
+export const UPGRADE_BROADBAND="UPGRADE_BROADBAND"
 //Search
 export const SEARCHPRODUCT="SEARCHPRODUCT"
-
 //cart
 export const ADDTOCART="ADDTOCART"
 export const UPDATECART="UPDATECART"

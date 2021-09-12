@@ -44,8 +44,8 @@ const useStyles = makeStyles((theme) => ({
 export default function ClippedDrawer() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  var icons = [<Home />, <PhoneAndroid />, <Router />, <Shop />, <ShoppingCart />, <AccountBox />, <ContactSupport />, <Payment />]
-  var links = ['/', '/mobile', '/broadband', '/products', '/cart', '/profile', '/contactus', '/payment']
+  var icons = [<Home />, <PhoneAndroid />, <Router />, <Shop />, <ShoppingCart />, <AccountBox />, <ContactSupport />]
+  var links = ['/', '/mobile', '/broadband', '/products', '/cart', '/profile', '/contactus', ]
   
   const token = JSON.parse(localStorage.getItem("profile"))?.token;
   //console.log("Token",token)
@@ -90,7 +90,7 @@ export default function ClippedDrawer() {
         <Toolbar />
         <div className={classes.drawerContainer}>
           <List>
-            {['Home', 'Mobile', 'Broadband', 'Tech Products', 'My Cart', 'My Account', 'Contact Us', 'Payment'].map((text, index) => {
+            {['Home', 'Mobile', 'Broadband', 'Tech Products', 'My Cart', 'My Account', 'Contact Us'].map((text, index) => {
 
               return (
                 <Link className="tags" style={{ textDecoration: 'none', color: "black" }} to={links[index]}>
