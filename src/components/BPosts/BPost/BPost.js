@@ -202,7 +202,7 @@ const BPost = ({setSnackBarMsg, broadband, currentId_broadband, setCurrentId_bro
     // href="/Payment"
     style={{maxWidth: '40px', maxHeight: '30px', minWidth: '40px', minHeight: '30px', marginTop: "30px", paddingRight:"5px"}}
     onClick={broadbandtocard}
-    className={classes.button}
+    className={classes_2.button}
     startIcon={<ShoppingCartIcon style={{justifyContent:"center"}}
      />}
   >

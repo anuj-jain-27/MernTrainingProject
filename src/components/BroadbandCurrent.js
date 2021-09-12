@@ -20,7 +20,8 @@ import BPosts from './BPosts/BPosts';
 import Table_broadband from './Table_broadband';
 import Table_broadband_Upgrade from './TableBroadbandUpgrade';
 import PaymentModal from './pages/paymentmodal';
-import Snackbar from '../components/notifications/snackbar'
+import Snackbar from '../components/notifications/snackbar';
+import CloseIcon from '@material-ui/icons/Cancel';
 
 const useStyles_1 = makeStyles((theme) => ({
   formControl: {
@@ -183,17 +184,19 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
         }}
       >
         <Fade in={open}>
+          <div>
+        <Button style={{ marginLeft: "auto"}} className={classes.logButton} endIcon={<CloseIcon />}  variant="contained" color="pink" size="small" fontSize="small" onClick={handleClose}>Close</Button>
           {clicked?<><PaymentModal clicked={clicked} /> <Button type="button"  style={{right:"100px", top:"180px"}} className={classes.buttonSubmit}  variant="contained" color="primary" onClick={openUpgrade} >
             Back
            </Button></> :
-          <><div className={classes_1.paper}>
+          <div class="wrapper"><div className={classes_1.paper}>
           <h2 id="transition-modal-title">Choose among the following plans to upgrade</h2>
           <Table_broadband_Upgrade data={broadbands_upgrades} setRows={setRows} rows={rows}/>
           {rows?._id?<> <Button type="button"  className={classes.buttonSubmit} style={{marginTop:"20px", marginleft:"auto", display: "block"}} variant="contained" color="primary" onClick={openPayment} >
             Proceed to payment
            </Button></>:<></>}
-        </div></>}
-         
+        </div></div>}
+         </div>
         </Fade>
       </Modal>
          

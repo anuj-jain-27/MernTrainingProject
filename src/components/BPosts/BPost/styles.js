@@ -58,4 +58,10 @@ export default makeStyles({
     color: '#fff',
     
   },
+  logButton:{
+    display: 'flex',
+    fontSize:"10px",
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+  },
 });

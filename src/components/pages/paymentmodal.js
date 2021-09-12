@@ -113,7 +113,7 @@ function PaymentModal(clicked) {
       </RadioGroup>
       </FormControl>
       <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
-              <Grid item xs={12} sm={5}>
+              <Grid item xs={12} sm={6}>
               {value==="add"? <PaymentForm/>: <PaymentForm_1 clicked={clicked} /> }
               {broadband!=null?<><Button type="button" style={{marginTop:"10px" , width:"250px"}} size="small" className={classes.buttonSubmit} variant="contained" color="primary"  onClick={handleRemoveBroadband}>
           Remove Broadband plan
@@ -123,7 +123,7 @@ function PaymentModal(clicked) {
           Remove Mobile plan
       </Button></>:<></>}
               </Grid>
-              <Grid style={{marginLeft:"5px"}}item xs={12} sm={6}>
+              <Grid style={{marginLeft:"5px"}}item xs={12} sm={5}>
   <Card style={{ width:"250px", justifyContent:"center"}}>
   <div style={{justifyContent:"center", textAlign:"center", marginBottom:"20px"}}>
   <Typography style={{justifyContent:"center"}} variant="h8">Plans Selected</Typography></div>

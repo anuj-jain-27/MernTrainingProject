@@ -45,6 +45,20 @@ function Mobile() {
   console.log(datas)
   var profile=JSON.parse(localStorage.getItem('profile'))
   var user= profile?.user?._id
+  var timer;
+
+  // function handleSub(event) {
+  //   clearTimeout(timer);
+    
+  //   if (event.detail === 1) {
+  //     timer = setTimeout(() => {
+  //       console.log("SINGLE CLICK");
+  //     }, 200)
+  
+  //   } else if (event.detail === 2) {
+  //     console.log("DOUBLE CLICK");
+  //   }
+  // }
     return (
       <Container maxWidth="lg">
       <Scroll showBelow={50} />
@@ -58,6 +72,9 @@ function Mobile() {
    <Typography>MOBILE PLANS</Typography>
    {value==="view" ?
          <>
+         {/* <Button type="button"  className={classes.buttonSubmit} variant="contained" color="primary" fullWidth onClick={handleSub}>
+         TRIAL
+      </Button> */}
          <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
              <Grid item xs={12} sm={12} md={6}>
              <Table data={posts}/>

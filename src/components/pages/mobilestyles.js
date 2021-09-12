@@ -51,6 +51,10 @@ export default makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
   },
- 
-  
+  logButton:{
+    display: 'flex',
+    fontSize:"10px",
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+  },
 });

@@ -106,7 +106,15 @@ function PaymentForm_1(clicked) {
     console.log(CardNumber)
     console.log(paydetails)
     console.log(clicked.clicked.clicked)
-    var stat=clicked.clicked.clicked
+    var stat=clicked.clicked.clicked;
+    var timer;
+   console.log(cardID)
+    // if(typeof(cardID)!=String){
+    //   console.log("true")
+    //   console.log(typeof(cardID))
+    // }
+
+    
     const handleSubmit = e => {
       e.preventDefault()
       for (var i=0; i<cards.length;i++) {
@@ -114,16 +122,16 @@ function PaymentForm_1(clicked) {
           setCardId(cards[i]._id)
         }
       }
-      console.log(cardID)
-      if (broadband!=null && stat===true){
+      if (broadband!=null && stat===true ){
         dispatch(upgradeBroadbandPlan(broadbandUpgradeDetails,cardID, profile?.user?._id));
       }
-      if(broadband!=null && stat!==true){
+      if(broadband!=null && stat!==true ){
         dispatch(broadbandpay(paydetails, broadband._id, cardID, profile?.user?._id))
       }
-      if(plansMobile!=null){
-            dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, profile?.user?._id));
+      if(plansMobile!=null ){
+        dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, profile?.user?._id));
           }
+   
           //  if (plansMobile._id != " " && broadbandpay._id!=" ") {
           //    dispatch(mobileplanpay(paydetails, plansMobile._id,cardID, user));
           //    dispatch(broadbandpay(paydetails, plansMobile._id,cardID,  user))
