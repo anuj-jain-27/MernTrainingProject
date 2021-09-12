@@ -142,7 +142,7 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
   console.log(currentbroadband[currentbroadband.length-1])
   
     return (
-     ( datas.length ==0 || broadbands.length ==0 || currentbroadband.length==0?<CircularProgress />:
+     ( datas.length ==0 || broadbands.length ==0 || currentbroadband.length==0?<></>:
       <>
       <Container maxWidth="lg">
         <Grow in>

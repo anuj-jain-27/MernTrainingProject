@@ -38,6 +38,12 @@ function Broadband() {
   const [currentId_blocation, setCurrentId_blocation] = useState(0);
   const [BUpgrade, setBUpgrade] = useState(true);
   const [value, setValue] = React.useState('move');
+  var profile=JSON.parse(localStorage.getItem('profile'))
+  var user= profile?.user?._id
+  console.log(user)
+  if (user == undefined){
+    console.log(true)
+  }
   const handleChange = (event) => {
     setValue(event.target.value);
     console.log(value)
@@ -102,7 +108,7 @@ function Broadband() {
              <BPosts currentId_broadband={currentId_broadband}  setCurrentId_broadband={setCurrentId_broadband} searchterm={searchterm} />
              </Grid>
              <Grid item  xs={12} sm={6} md={6}>
-             <BroadbandMUsagePlans/>
+               {user!==undefined?<> <BroadbandMUsagePlans/></>:<></>}
              <Typography style={{marginTop:"20px"}}>SEARCH PLAN BASED ON SUBURBS, CITIES, STATES</Typography>
               <Searchbar searchterm={searchterm} setSearch={setSearchterm}  />
               <Blocations style={{marginTop:"20px"}} currentId_blocation={currentId_blocation} setCurrentId_blocation={setCurrentId_blocation} searchterm={searchterm} />

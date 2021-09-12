@@ -183,7 +183,6 @@ function Mobile() {
       <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 15-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-2].dc} GB</span></div>
       <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 14-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-3].dc} GB</span></div>
       </div>
-
         </CardContent>
         <CardActions>
         </CardActions>

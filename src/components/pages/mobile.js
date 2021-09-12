@@ -43,6 +43,8 @@ function Mobile() {
   };
 
   console.log(datas)
+  var profile=JSON.parse(localStorage.getItem('profile'))
+  var user= profile?.user?._id
     return (
       <Container maxWidth="lg">
       <Scroll showBelow={50} />
@@ -69,7 +71,8 @@ function Mobile() {
              <Posts setCurrentId={setCurrentId}  currentId={currentId} />
              </Grid>
              <Grid item xs={12} sm={12} md={6}>
-             <DataUsageMPlans/>
+             {user!==undefined?<><DataUsageMPlans/> </>:<></>}
+             
              </Grid>
            </Grid>
            </>
