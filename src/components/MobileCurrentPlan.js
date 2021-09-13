@@ -107,14 +107,15 @@ function MobileCurrent() {
       Total_Consumption=Total_Consumption+datas[i].dc
   }
   const classes = useStyles();
+  const [elevated, setElevated]=useState(2);
     return (
      ( datas.length==0 ||  planuser.length ==0 ?<></>:
       <>
-      <Container maxWidth="lg">
+      <Container style={{marginTop:"10px"}} maxWidth="lg">
         <Grow in>
           <Container>
         <Grid container  justify="space-between" alignItems="stretch" spacing={3}>
-        <Card className={classes.root} style={{marginBottom:"5px"}} variant="outlined">
+        <Card className={classes.root} style={{marginBottom:"5px"}}  elevation={elevated}   onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)} variant="outlined">
         <CardContent>
         <div style={{padding:"10px", backgroundColor:"#8cd2e8"}}>
         <Typography  style={{ fontWeight:"fontWeightBold"}} className={classes.title} color="textSecondary" gutterBottom>

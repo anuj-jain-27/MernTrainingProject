@@ -30,13 +30,13 @@ const Blocations = ({ currentId_blocation, setCurrentId_blocation, searchterm}) 
 
   if (!searchterm) {
     var blocationjsx = blocations.map((blocation) => (
-    <Grid key={blocation._id} item xs={12} sm={6} md={3} >
+    <Grid key={blocation._id} item xs={12} sm={6} md={6} >
       <Blocation blocation={blocation} currentId_blocation={currentId_blocation}  setCurrentId_blocation={setCurrentId_blocation}/>
     </Grid>
   ))
 } else {
   var blocationjsx = searchResults.map((blocation) => (
-    <Grid key={blocation._id} item xs={12} sm={6} md={3} >
+    <Grid key={blocation._id} item xs={12} sm={6} md={6} >
       <Blocation blocation={blocation} currentId_blocation={currentId_blocation}  setCurrentId_blocation={setCurrentId_blocation} />
     </Grid>
   ))
@@ -57,8 +57,9 @@ const Blocations = ({ currentId_blocation, setCurrentId_blocation, searchterm}) 
       }
   }}
   console.log(arraydata)
+
   var blocationjsx_1 = arraydata.map((arrayd) => (
-    <Grid key={arrayd._id} item xs={12} sm={6} md={3} >
+    <Grid key={arrayd._id} item style={{marginTop:"10px"}} xs={12} sm={6} md={6} >
       <BPost broadband={arrayd} />
     </Grid>
   ))

@@ -2,12 +2,38 @@ import React from 'react';
 import { Card, CardActions, CardContent, CardMedia, Button, Typography } from '@material-ui/core/';
 import Line from "../../Line"
 import useStyles from './styles';
+import { jsPDF } from "jspdf";
+import { useState } from 'react';
 
 const Plan = ({ plan}) => {
   console.log(plan.id)
   const classes = useStyles();
+  var profile=JSON.parse(localStorage.getItem('profile'))
+  var doc =new jsPDF("p", "pt");
+
+  doc.setFont(undefined, 'bold')
+  
+  doc.text(180,20, "MOBILE PLAN INVOICE");
+ console.log(plan)
+  doc.text(180,60, "Name: " + profile?.user?.name);
+  doc.text(180,80, "Email ID: " + profile?.user?.email);
+  doc.setFont(undefined, 'normal')
+  doc.text(20,120, "Amount: Rs "+ String(plan.cost));
+  doc.text(20,140, "Payment Status: "+ plan.status);
+  doc.text(20,160, "Validity: " +String(plan.validity) +"days");
+  doc.text(20,180, "Paid On: " + plan.createdAt.slice(0,10));
+  doc.text(20,200, "Data Availed: "+ String(plan.data) +"GB");
+  doc.text(20,220, "SMS: "+ String(plan.SMS));
+  doc.text(20,240, "Reference number: "+ plan.transaction_id);
+
+  
+   const handleDownload = () => {
+     doc.save("MobileInvoice.pdf");
+   };
+ 
+   const [elevated, setElevated]=useState(2);
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} className={classes.card} elevation={elevated}  onMouseOver={() => setElevated(10)}  onMouseOut={() => setElevated(2)}>
       <div className={classes.overlay2}>
       </div>
       <div className={classes.details}>
@@ -23,6 +49,9 @@ const Plan = ({ plan}) => {
         <Typography ariant="body2" color="textSecondary" component="p">Paid on - {plan.createdAt.slice(0,10)}</Typography>
         <Typography variant="body2" color="textSecondary" component="p">Data - {plan.data} GB</Typography>
         <Typography variant="body2" color="textSecondary" component="p">SMS - {plan.SMS}/ Day</Typography>
+        <Button type="button" style={{marginTop:"10px"}} className={classes.buttonSubmit} variant="contained" color="primary" size="small" onClick={handleDownload}>
+          Download Invoice
+      </Button>
       </CardContent>
     </Card>
   );

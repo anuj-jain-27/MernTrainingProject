@@ -78,7 +78,6 @@ const useStyles_3 = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
@@ -91,7 +90,6 @@ const useStyles_2 = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
@@ -108,6 +106,7 @@ const BPost = ({setSnackBarMsg, broadband, currentId_broadband, setCurrentId_bro
   const details = localStorage.getItem("profile");
   const [modal, setModal]=useState(false)
   const [open_pay, setOpen_Pay] = React.useState(false);
+  const [elevated, setElevated]=useState(2);
 
   var profile=JSON.parse(localStorage.getItem('profile'))
   var user= profile?.user?._id
@@ -139,7 +138,9 @@ const BPost = ({setSnackBarMsg, broadband, currentId_broadband, setCurrentId_bro
   }
  
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} elevation={elevated}  
+    onMouseOver={() => setElevated(10)} 
+    onMouseOut={() => setElevated(2)}>
       <div className={classes.colorblock}>
     <Typography className={classes.title} gutterBottom variant="h7" style={{marginTop:"5px"}} component="h4"> {broadband.name}</Typography>
 <Typography className={classes.title} gutterBottom variant="h7" component="h4">Price - {broadband.monthlyprice}</Typography>
@@ -196,6 +197,7 @@ const BPost = ({setSnackBarMsg, broadband, currentId_broadband, setCurrentId_bro
       </>:<></>}
     {
      <>
+  
   <Button
     variant="contained"
     color="primary"

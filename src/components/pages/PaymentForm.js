@@ -45,7 +45,7 @@ const handleSubmit = e => {
             <Form.Group>
             <Typography> Add Card details</Typography>
             <img height='40px' width="200px" marginLeft="2px" src={pic} align="center" align="left"></img>
-              <Form.Control style={{margin:"10px"}}
+              <Form.Control style={{marginTop:"5px"}}
                 type="text"
                 id="cardname"
                 name="cardname"
@@ -56,7 +56,7 @@ const handleSubmit = e => {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Control style={{margin:"10px"}}
+              <Form.Control style={{marginTop:"5px"}}
                 type="Number"
                 id="cardnumber"
                 name="cardnumber"
@@ -68,7 +68,7 @@ const handleSubmit = e => {
             </Form.Group>
             <Row>
                 <Form.Group>
-                  <Form.Control style={{margin:"10px"}}
+                  <Form.Control style={{marginTop:"5px"}}
                     type="text"
                     name="cardtype"
                     id="cardtype"
@@ -81,7 +81,7 @@ const handleSubmit = e => {
             </Row>
             <Row>
                 <Form.Group>
-                <Form.Control style={{margin:"10px"}}
+                <Form.Control style={{marginTop:"5px"}}
                     type="text"
                     id="expirydate"
                     name="expirydate"
@@ -92,7 +92,7 @@ const handleSubmit = e => {
                   />
                 </Form.Group>
             </Row>
-            <Button
+            <Button style={{marginTop:"5px"}}
               size={"block"}
               id="validateButton"
               type="submit"

@@ -1,6 +1,6 @@
 import {CREATE_BROADBAND_PLAN, DELETE_BROADBAND, GET_BROADBAND_PLAN, UPDATE_BROADBAND_PLAN} from '../constants/actionTypes';
 
-// eslint-disable-next-line import/no-anonymous-default-export
+
 export default (broadbands = [], action) => {
     switch (action.type) {
         case GET_BROADBAND_PLAN:

@@ -22,6 +22,12 @@ import FormControl from '@material-ui/core/FormControl';
 import MobileCurrent from '../MobileCurrentPlan';
 import MPlansHistory from '../mplanshistory';
 import mobilepic from '../../images/mobileplans.png';
+import {Switch} from  '@material-ui/core';
+import pic7 from '../../images/seven.jpg';
+import pic8 from '../../images/eight.jpg';
+import pic9 from '../../images/nine.png';
+import { CardMedia } from '@material-ui/core/';
+import Line from "../Line";
 
 
 function Mobile() {
@@ -41,11 +47,18 @@ function Mobile() {
     setValue(event.target.value);
     console.log(value)
   };
+  const [toggle, setToggle]=useState(false);
+  const toggler=()=>{
+    toggle? setToggle(false): setToggle(true);
+  }
 
   console.log(datas)
   var profile=JSON.parse(localStorage.getItem('profile'))
   var user= profile?.user?._id
-  var timer;
+ 
+  const planuser = useSelector((state) => state.planuser);
+  console.log(planuser)
+  const [elevated, setElevated]=useState(2);
 
   // function handleSub(event) {
   //   clearTimeout(timer);
@@ -64,46 +77,90 @@ function Mobile() {
       <Scroll showBelow={50} />
     <FormControl component="fieldset">
    <RadioGroup row aria-label="page" name="page1" value={value} onChange={handleChange}>
+
    <FormControlLabel value="view" control={<Radio color="primary" />} label="View Mobile Plan" />
-   <FormControlLabel value="add" control={<Radio color="primary" />} label="Add Current plans" />
-   <FormControlLabel value="prev" control={<Radio color="primary" />} label="View Recharge History " />
+   {profile?.user?.role===1?<>
+   <FormControlLabel value="add" control={<Radio color="primary" />} label="Add Current plans" /></>:<></>}
+   {profile?.user?._id!=null?<>
+   <FormControlLabel value="prev" control={<Radio color="primary" />} label="View Recharge History " /></>:<></>}
    </RadioGroup>
    </FormControl>
-   <Typography>MOBILE PLANS</Typography>
    {value==="view" ?
          <>
-         {/* <Button type="button"  className={classes.buttonSubmit} variant="contained" color="primary" fullWidth onClick={handleSub}>
-         TRIAL
-      </Button> */}
-         <Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
-             <Grid item xs={12} sm={12} md={6}>
-             <Table data={posts}/>
-             </Grid>
-             <Grid item xs={12} sm={12} md={6}>
-             <MobileCurrent/>
-             </Grid>
-           </Grid>
-           <Grid  container justify="space-between" alignItems="start" style={{marginTop:"20px", marginBottom:"20px"}}  spacing={1}>
-             <Grid item xs={12} sm={8} md={6} >
-             <Posts setCurrentId={setCurrentId}  currentId={currentId} />
-             </Grid>
-             <Grid item xs={12} sm={12} md={6}>
-             {user!==undefined?<><DataUsageMPlans/> </>:<></>}
-             
-             </Grid>
-           </Grid>
-           </>
+         <>
+        <Grid container style={{marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
+           <Grid item xs={12} sm={12} md={6}>
+
+             <div style={{ display: 'flex',flexDirection: 'row', alignItems:"center"}} >
+             <span  STYLE="color:black;font-weight:400;font-size:14px"> Switch to view different layout </span> <Switch color="primary" style={{Bottom:"20px"}} onClick={toggler} alignItems="center" /> 
+           </div>
+           {toggle ?<> <Table data={posts}/> </>:<><Grid container style={{marginTop:"20px", marginBottom:"20px"}} justify="space-between" alignItems="start" spacing={2}>
+            <Grid item xs={12} sm={12} md={10}>
+            <Posts setCurrentId={setCurrentId}  currentId={currentId} />
+            </Grid></Grid></>}
+            </Grid>
+            <Grid item xs={12} sm={8} md={6}>
+            <MobileCurrent/>
+            {user!==undefined && planuser.length!=0?<><DataUsageMPlans/></>:<></>}
+            </Grid>
+            </Grid>
+          </>
+          </>
           : 
           <>
           {value==="add" ?
           <>
+          <div style={{
+        position: 'absolute', left: '50%',
+        transform: 'translate(-50%)', marginTop:"10px"
+    }}>
              <Form currentId={currentId} setCurrentId={setCurrentId} />
+          </div>
             </>
              :    <> {value==="prev" ?
              <>
                 <><MPlansHistory/></> 
                </>
-                :    <> <img height='400px' width="900px" marginLeft="2px" src={mobilepic} align="center" align="left"></img></> 
+                :    <>  <div><span  STYLE="color:black;font-weight:600;font-size:38px">MOBILE PLANS</span></div>
+                <Line color="#3f51b5"/> 
+                <Grid className={classes.container} style={{marginRight:"5px"}} container alignItems="stretch" spacing={3}>
+                <Grid item xs={12} sm={6} md={4}>
+                <Card  className={classes.card}  elevation={elevated}  
+          onMouseOver={() => setElevated(10)} 
+          onMouseOut={() => setElevated(2)} >
+            <CardMedia className={classes.media} image={pic7}/>
+            <CardContent>
+            Telstra Smart Modem targets your devices with a concentrated signal. And switches to 4G in an outage. Included for new customers. 4G coverage required. 4G speeds capped at 25/2 Mbps. Actual speeds may be lower
+            </CardContent>
+          </Card>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                <Card  className={classes.card}  elevation={elevated}  
+          onMouseOver={() => setElevated(10)} 
+          onMouseOut={() => setElevated(2)} >
+            <CardMedia className={classes.media} image={pic8}/>
+            <CardContent>
+            Home phone service
++ unlimited standard Australian mobile calls + 100 GBs of Data Consumption
+Our internet plans come with a home phone service included. Plus unlimited calls to standard Australian mobiles.
+
+            </CardContent>
+          </Card>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                <Card  className={classes.card}  elevation={elevated}  
+          onMouseOver={() => setElevated(10)} 
+          onMouseOut={() => setElevated(2)} >
+            <CardMedia className={classes.media} image={pic9}/>
+            <CardContent>
+            Broadband Protect
+Cyber threat protection for your family
+With parental controls, social network protection and device protection to help keep everyone at home safe online.
+Ability to stream movies, play games and lots more
+            </CardContent>
+          </Card>
+                </Grid>
+                </Grid></> 
              }</> 
           }
           </>

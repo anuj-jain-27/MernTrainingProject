@@ -38,7 +38,6 @@ const useStyles_1 = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
@@ -66,8 +65,6 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
 
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
-
-
  
   useEffect(() => {
     if (datas.length == 0)
@@ -97,6 +94,7 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
 
   const currentbroadband = useSelector((state) => state.currentbroadband);
   console.log(currentbroadband)
+
   var broadbands_upgrades=[]
   for (var j=0; j<broadbands.length; j++){
     if(broadbands[j].monthlyprice+parseInt(broadbands[j].installationcharges)>currentbroadband[currentbroadband.length-1]?.amount){
@@ -114,6 +112,7 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
   const datas = useSelector((state) => state.datas);
 
   const [open, setOpen] = React.useState(false);
+  const [displaybroadband, setDisplayBroadband] = React.useState({});
   
 
   const handleOpen = () => {
@@ -141,33 +140,35 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
     localStorage.setItem('broadband',JSON.stringify(rows))
    }
   console.log(currentbroadband[currentbroadband.length-1])
-  
+  const [elevated, setElevated]=useState(2);
+  console.log(currentbroadband[0])
+
     return (
      ( datas.length ==0 || broadbands.length ==0 || currentbroadband.length==0?<></>:
       <>
-      <Container maxWidth="lg">
+      <Container  style={{marginTop:"10px"}} maxWidth="lg">
         <Grow in>
           <Container>
         <Grid container  justify="space-between" alignItems="stretch" spacing={3}>
-        <Card className={classes.root} style={{marginBottom:"5px"}} variant="outlined">
+        <Card className={classes.root} style={{marginBottom:"5px"}}  elevation={elevated}   onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)} variant="outlined">
         <CardContent>
         <div style={{padding:"10px", backgroundColor:"#8cd2e8"}}>
         <Typography style={{ fontWeight:"fontWeightBold"}} className={classes.title} color="textSecondary" gutterBottom>
         MY CURRENT BROADBAND PLAN
         </Typography>
-        <Typography className={classes.title} gutterBottom variant="h7" component="h5">Price -{currentbroadband[currentbroadband.length-1]?.amount} /Month</Typography>
-        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Plan Type: {currentbroadband[currentbroadband.length-1]?.plantype}</Typography>
-        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Validity: {currentbroadband[currentbroadband.length-1]?.plantill.slice(0,10)} days</Typography>
-        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Data:{currentbroadband[currentbroadband.length-1]?.usage} GB</Typography>
+        <Typography className={classes.title} gutterBottom variant="h7" component="h5">Price -{currentbroadband[0]?.amount} /Month</Typography>
+        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Plan Type: {currentbroadband[0]?.plantype}</Typography>
+        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Validity: {currentbroadband[0]?.plantill.slice(0,10)} days</Typography>
+        <Typography className={classes.title} color="textSecondary" gutterBottom variant="h7" component="h6">Data:{currentbroadband[0]?.usage} GB</Typography>
         </div>
         <div style={{padding:"10px", backgroundColor:"#203354", color:"white"}}>
-        <Typography className={classes.title} gutterBottom variant="h7" component="h6">TOTAL: {currentbroadband[currentbroadband.length-1]?.usage} GB </Typography>
+        <Typography className={classes.title} gutterBottom variant="h7" component="h6">TOTAL: {currentbroadband[0]?.usage} GB </Typography>
         <Typography className={classes.title} gutterBottom variant="h7" component="h6">TOTAL USED:{dataconsumed} </Typography>
         <Typography className={classes.title} gutterBottom variant="h7" component="h6">BALANCE: 48</Typography>
         </div>
         <Typography className={classes.title} color="textSecondary" gutterBottom>
         </Typography>
-        {currentbroadband[currentbroadband.length-1]?.isupgrade===0?<>
+        {currentbroadband.length!=2?<>
          <Button type="button"  className={classes.buttonSubmit} variant="contained" color="primary" fullWidth onClick={handleOpen}>
           UPGRADE PLAN
       </Button>
@@ -189,8 +190,8 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
           {clicked?<><PaymentModal clicked={clicked} /> <Button type="button"  style={{right:"100px", top:"180px"}} className={classes.buttonSubmit}  variant="contained" color="primary" onClick={openUpgrade} >
             Back
            </Button></> :
-          <div class="wrapper"><div className={classes_1.paper}>
-          <h2 id="transition-modal-title">Choose among the following plans to upgrade</h2>
+          <div class="wrapperone"><div className={classes_1.paper}>
+          <h4 id="transition-modal-title">Choose among the following plans to upgrade</h4>
           <Table_broadband_Upgrade data={broadbands_upgrades} setRows={setRows} rows={rows}/>
           {rows?._id?<> <Button type="button"  className={classes.buttonSubmit} style={{marginTop:"20px", marginleft:"auto", display: "block"}} variant="contained" color="primary" onClick={openPayment} >
             Proceed to payment

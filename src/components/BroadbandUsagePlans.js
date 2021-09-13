@@ -45,6 +45,7 @@ const useStyles_2 = makeStyles((theme) => ({
 }));
 function BroadbandMUsagePlans() {
   const classes_1=useStyles_1
+  const [elevated, setElevated]=useState(2);
   const [currentValue, setCurrentValue] = useState(0);
   const [state_start, setState_start] = React.useState({
     age: '',
@@ -116,7 +117,7 @@ function BroadbandMUsagePlans() {
         <Grow in>
           <Container>
             <Grid container style={{marginTop:"20px"}} justify="space-between" alignItems="stretch" spacing={3}>
-            <Card style={{marginBottom:"10px", width:"320px"}} className={classes.root}  variant="outlined">
+            <Card style={{marginBottom:"10px", width:"320px"}} className={classes.root}  elevation={elevated}   onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)} variant="outlined">
               <CardContent>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                  BROADBAND DATA USAGE TODAY : {datas[datas.length-1].dc}/ 2 GB

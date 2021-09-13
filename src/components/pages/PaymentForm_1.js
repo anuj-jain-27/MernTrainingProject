@@ -113,8 +113,6 @@ function PaymentForm_1(clicked) {
     //   console.log("true")
     //   console.log(typeof(cardID))
     // }
-
-    
     const handleSubmit = e => {
       e.preventDefault()
       for (var i=0; i<cards.length;i++) {
@@ -122,14 +120,17 @@ function PaymentForm_1(clicked) {
           setCardId(cards[i]._id)
         }
       }
-      if (broadband!=null && stat===true ){
+      if (broadband!=null && stat===true && typeof(cardID)!= "object"){
         dispatch(upgradeBroadbandPlan(broadbandUpgradeDetails,cardID, profile?.user?._id));
+        alert("Paid, Check Recharge history and current plan")
       }
-      if(broadband!=null && stat!==true ){
+      if(broadband!=null && stat!==true && typeof(cardID)!= "object"){
         dispatch(broadbandpay(paydetails, broadband._id, cardID, profile?.user?._id))
+        alert("Paid, Check Recharge history and current plan")
       }
-      if(plansMobile!=null ){
+      if(plansMobile!=null && typeof(cardID)!= "object"){
         dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, profile?.user?._id));
+        alert("Paid, Check Recharge history and current plan")
           }
    
           //  if (plansMobile._id != " " && broadbandpay._id!=" ") {

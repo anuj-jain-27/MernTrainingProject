@@ -38,7 +38,7 @@ export default function Searchbar({setSearch,setSearchterm}) {
   }
   //const searchResults=useSelector((state)=>state.searchResults)
   return (
-    <Paper component="form" style={{marginTop:"20px"}} className={classes.root}>
+    <Paper component="form" style={{marginTop:"20px", marginBottom:"20px"}} className={classes.root}>
       <InputBase
         className={classes.input}
         placeholder="Search.."

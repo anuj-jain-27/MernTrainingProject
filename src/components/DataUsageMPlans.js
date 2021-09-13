@@ -96,6 +96,7 @@ function Mobile() {
       Total_Consumption=Total_Consumption+datas[i].dc
   }
   const classes = useStyles();
+  const [elevated, setElevated]=useState(2);
 
 
     return (
@@ -105,7 +106,7 @@ function Mobile() {
         <Grow in>
           <Container>
             <Grid container style={{marginTop:"10px"}} justify="space-between" alignItems="stretch" spacing={3}>
-            <Card style={{marginBottom:"10px", width:"320px"}} className={classes.card}  variant="outlined">
+            <Card style={{marginBottom:"10px", width:"320px"}} className={classes.card} elevation={elevated}  onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)}  variant="outlined">
               <CardContent>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                  DATA USAGE TODAY : {datas[datas.length-1].dc}/ 2 GB

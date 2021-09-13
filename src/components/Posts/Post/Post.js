@@ -22,6 +22,8 @@ import CloseIcon from '@material-ui/icons/Cancel';
 import {BrowserRouter as Router,Switch,Route,Link} from "react-router-dom";
 import Googlemodal from '../../googleauth/googlemodal';
 import PaymentModal from '../../pages/paymentmodal';
+import "react-responsive-modal/styles.css";
+// import { Modal } from "react-responsive-modal";
 
 
 const BootstrapButton = withStyles({
@@ -76,7 +78,6 @@ const useStyles_2 = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
@@ -90,7 +91,6 @@ const useStyles_3 = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
@@ -135,13 +135,18 @@ const Post = ({setSnackBarMsg, post, setCurrentId,currentId}) => {
   const handleClose_Pay = () => {
     setOpen_Pay(false);
   };
-
+  
+  const [elevated, setElevated]=useState(2);
+  
   const handleDelete=async ()=>{
       await dispatch(deletePost(user, post._id))
       setSnackBarMsg({ message: "Plan deleted sucessfully", severity: "success" })
   }
   return (
-    <Card className={classes.card} >
+    <Card className={classes.card}  elevation={elevated}  
+    onMouseOver={() => setElevated(10)} 
+    onMouseOut={() => setElevated(2)}
+    >
     <div className={classes.colorblock}>
     <Typography className={classes.title} style={{marginTop:"10px"}} gutterBottom variant="h6" component="h5">Plan - Rs {post.plan}</Typography>
     <Typography className={classes.title} gutterBottom variant="h6" component="h6">validity - {post.validity} days</Typography>
@@ -192,6 +197,7 @@ const Post = ({setSnackBarMsg, post, setCurrentId,currentId}) => {
         </Fade>
       </Modal>
       </>:<></>}
+  
   <Button
     variant="contained"
     color="primary"
@@ -199,8 +205,7 @@ const Post = ({setSnackBarMsg, post, setCurrentId,currentId}) => {
     onClick={mobiletocard}
     style={{maxWidth: '40px', maxHeight: '30px', minWidth: '40px', minHeight: '30px', marginTop: "30px", paddingRight:"5px"}}
     className={classes_1.button}
-    startIcon={<ShoppingCartIcon style={{justifyContent:"center"}} />}
-  >
+    startIcon={<ShoppingCartIcon style={{justifyContent:"center"}} />}>
   </Button>
   <Modal
    aria-labelledby="transition-modal-title"
