@@ -69,7 +69,7 @@ const BootstrapButton = withStyles({
       },
     },
   }))(Button);
-function PaymentForm_1(clicked) {
+function PaymentForm_1(clicked, clickedrenew) {
     const [paydetails, setPayDetails] = useState({});
     const currentbroadband = useSelector((state) => state.currentbroadband);
     const dispatch = useDispatch();
@@ -81,7 +81,9 @@ function PaymentForm_1(clicked) {
     console.log(currentbroadband[currentbroadband.length-1])
     console.log(broadband)
     let broadbandUpgradeDetails = {newplan:broadband, currentplan:currentbroadband[currentbroadband.length-1], address: paydetails.Address, cvv:paydetails.CVV};
-   console.log(broadbandUpgradeDetails)
+    let broadbandRenewDetails = {currentplan:currentbroadband[currentbroadband.length-1], address: paydetails.Address, cvv:paydetails.CVV};
+   
+    console.log(broadbandUpgradeDetails)
     var profile=JSON.parse(localStorage.getItem('profile'))
     const [cardID, setCardId] = useState({});
     const [cardIndex, setCardIndex] = useState(-1);
@@ -105,14 +107,11 @@ function PaymentForm_1(clicked) {
     };
     console.log(CardNumber)
     console.log(paydetails)
-    console.log(clicked.clicked.clicked)
+    //if payment for upgrade stat is true, if payment for renew, statrenew true
     var stat=clicked.clicked.clicked;
-    var timer;
-   console.log(cardID)
-    // if(typeof(cardID)!=String){
-    //   console.log("true")
-    //   console.log(typeof(cardID))
-    // }
+    var statrenew=clicked.clicked.clickedrenew
+
+  
     const handleSubmit = e => {
       e.preventDefault()
       for (var i=0; i<cards.length;i++) {
@@ -120,19 +119,27 @@ function PaymentForm_1(clicked) {
           setCardId(cards[i]._id)
         }
       }
-      if (broadband!=null && stat===true && typeof(cardID)!= "object"){
+      if (broadband!=null && stat===true && statrenew!=false && typeof(cardID)!= "object"){
         dispatch(upgradeBroadbandPlan(broadbandUpgradeDetails,cardID, profile?.user?._id));
         alert("Paid, Check Recharge history and current plan")
+      
       }
-      if(broadband!=null && stat!==true && typeof(cardID)!= "object"){
+      if(broadband!=null && stat!==true && statrenew!=true && typeof(cardID)!= "object"){
         dispatch(broadbandpay(paydetails, broadband._id, cardID, profile?.user?._id))
         alert("Paid, Check Recharge history and current plan")
+     
+      }
+      if(broadband!=null && stat!==true && statrenew==true && typeof(cardID)!= "object"){
+        dispatch(upgradeBroadbandPlan(broadbandRenewDetails,cardID, profile?.user?._id))
+        alert("Paid, Check Recharge history and current plan")
+     
       }
       if(plansMobile!=null && typeof(cardID)!= "object"){
         dispatch(mobileplanpay(paydetails, plansMobile._id, cardID, profile?.user?._id));
         alert("Paid, Check Recharge history and current plan")
-          }
-   
+     
+        }
+  
           //  if (plansMobile._id != " " && broadbandpay._id!=" ") {
           //    dispatch(mobileplanpay(paydetails, plansMobile._id,cardID, user));
           //    dispatch(broadbandpay(paydetails, plansMobile._id,cardID,  user))
@@ -159,6 +166,7 @@ function PaymentForm_1(clicked) {
           <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit} >
           <Typography> Payment Confirmation</Typography>
             <img height='40px' width="200px" marginLeft="2px" src={pic} align="center" align="left"></img>
+           
             <TextField
           id="outlined-select-position-native"
           name="Card Number"
@@ -172,6 +180,8 @@ function PaymentForm_1(clicked) {
           }}
           variant="outlined"
         >
+        
+          <option> </option>
           {cards.map((card) => (
             <option key={card.value} value={card.value}>
               {card.cardnumber}

@@ -44,7 +44,7 @@ import Snackbar from '../notifications/snackbar'
           <Container>
         <Paper className={classes.paper}>
           <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-          <Typography variant="h8">{currentId_broadband ? 'Editing a Broadband Plan' : ``}</Typography>
+          <Typography variant="h8">{currentId_broadband ? 'Editing a Broadband Plan' : `Add a Broadband Plan`}</Typography>
             <TextField  required size="small" name="name" variant="outlined" label="Name" fullWidth value={bpostData.name} onChange={(e) => setBPostData({ ...bpostData, name: e.target.value })} />
             <TextField  required size="small" name="monthlyprice" variant="outlined" label="Monthly Price" fullWidth value={bpostData.monthlyprice} onChange={(e) => setBPostData({ ...bpostData, monthlyprice: e.target.value })} />
             <TextField  required size="small" name="plantype" variant="outlined" label="Plan Type" fullWidth  value={bpostData.plantype} onChange={(e) => setBPostData({ ...bpostData, plantype: e.target.value })} />

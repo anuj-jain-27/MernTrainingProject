@@ -115,7 +115,7 @@ function MobileCurrent() {
         <Grow in>
           <Container>
         <Grid container  justify="space-between" alignItems="stretch" spacing={3}>
-        <Card className={classes.root} style={{marginBottom:"5px"}}  elevation={elevated}   onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)} variant="outlined">
+        <Card className={classes.card} style={{marginBottom:"5px", width:"300px"}}  elevation={elevated}   onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)} variant="outlined">
         <CardContent>
         <div style={{padding:"10px", backgroundColor:"#8cd2e8"}}>
         <Typography  style={{ fontWeight:"fontWeightBold"}} className={classes.title} color="textSecondary" gutterBottom>

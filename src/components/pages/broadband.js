@@ -2,7 +2,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import { Container, AppBar, Typography, Grow, Grid } from '@material-ui/core';
+import { Container, AppBar, Typography,  Fab, Grow, Grid } from '@material-ui/core';
 import useStyles from './mobilestyles';
 import BPosts from "../BPosts/BPosts"
 import Blocations from "../BPosts/Blocations";
@@ -34,6 +34,12 @@ import pic5 from '../../images/four.jpg';
 import pic6 from '../../images/six.jpg';
 import { CardMedia } from '@material-ui/core/';
 import Line from "../Line";
+import ImageSlider from './imageSlider';
+import { Add } from "@material-ui/icons";
+import { History } from '@material-ui/icons';
+import {CircularProgress,Paper,  Modal, Fade, Backdrop } from '@material-ui/core';
+import "./PaymentForm.css";
+import CloseIcon from '@material-ui/icons/Cancel';
 
 function Broadband() {
 
@@ -97,15 +103,32 @@ function Broadband() {
   console.log(blocations)
   
   const [elevated, setElevated]=useState(2);
+  const [open_his, setOpen_his] = React.useState(false);
+  const handleHis = () => {
+    setOpen_his(true);
+  };
+  const handleClose_his = () => {
+    setOpen_his(false);
+    
+  };
+  const [open, setOpen] = React.useState(false);
+  const handleAdd = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    
+  };
     return (
      
       <Container maxWidth="lg">
          <Scroll showBelow={50} />
-         <FormControl component="fieldset">
+      <FormControl component="fieldset">
       <RadioGroup row aria-label="page" name="page1" value={value} onChange={handleChange}>
-      {profile?.user?.role===1?<>
+     
+        <FormControlLabel value="view" control={<Radio color="primary" />} label="ViewCurrent Broadband Plans" />
+        {profile?.user?.role===1?<>
       <FormControlLabel value="add" control={<Radio color="primary" />} label="Add Broadband Plans" /></>:<></>}
-      <FormControlLabel value="view" control={<Radio color="primary" />} label="ViewCurrent Broadband Plans" />
       {profile?.user?._id!=null?<>
       <FormControlLabel value="prev" control={<Radio color="primary" />} label="View Previous Plans" /></>:<></>}
       </RadioGroup>
@@ -127,8 +150,62 @@ function Broadband() {
              </Grid></Grid></>}
              </Grid>
              <Grid item xs={12} sm={8} md={6}>
-             <BroadbandCurrent BUpgrade={BUpgrade} setBUpgrade={setBUpgrade}/>
              {user!==undefined && broadbandhistory.length!=0?<> <BroadbandMUsagePlans/></>:<></>}
+             <BroadbandCurrent BUpgrade={BUpgrade} setBUpgrade={setBUpgrade}/>
+             <Modal
+              aria-labelledby="transition-modal-title"
+              aria-describedby="transition-modal-description"
+              className={classes.modal}
+              open={open}
+              onClose={handleClose}
+              closeAfterTransition
+              BackdropComponent={Backdrop}
+              BackdropProps={{
+                timeout: 500,
+              }}
+              >
+              <Fade in={open}>
+              <div className={classes.paper}style={{
+              position: 'absolute', left: '50%', top:'50%',
+              transform: 'translate(-50%, -50%)', marginTop:"10px"
+              }}>
+              <Button style={{ marginLeft: "auto"}} className={classes.logButton} endIcon={<CloseIcon />}  variant="contained" color="pink" size="small" fontSize="small" onClick={handleClose}>Close</Button>
+             <BroadbandForm currentId_broadband={currentId_broadband} setCurrentId_broadband={setCurrentId_broadband} /> 
+              </div>
+              </Fade>
+              </Modal>
+            { profile?.user?.role==1?(<Fab color="primary" aria-label="add" size="medium" style={{ position: "fixed", bottom: "142px", right: "44px" }}>
+            <Add  onClick={handleAdd}  />
+            </Fab>):<></>}
+            <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className={classes.modal}
+            open={open_his}
+            onClose={handleClose_his}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+            >
+            <Fade in={open_his}>
+            <div className={classes.paper}style={{
+            position: 'absolute', left: '50%', top:'50%',
+            transform: 'translate(-50%, -50%)', marginTop:"10px"
+            }}>
+               <div class="wrapperone">
+               <Button style={{ marginLeft: "auto"}} className={classes.logButton} endIcon={<CloseIcon />}  variant="contained" color="pink" size="small" fontSize="small" onClick={handleClose_his}>Close</Button>
+                   <><BPlansHistory/></>  
+              </div>          
+            </div>
+            </Fade>
+            </Modal>
+
+
+            { profile?.user ?(<Fab color="primary" aria-label="add" size="medium" style={{ position: "fixed", bottom: "86px", right: "44px" }}>
+            <History  onClick={handleHis} />
+            </Fab>):<></>}
              </Grid>
              </Grid>
            </>
@@ -137,10 +214,7 @@ function Broadband() {
           <>
           {value==="add" ?
           <>
-          <div  style={{
-        position: 'absolute', left: '50%',
-        transform: 'translate(-50%)', marginTop:"10px"
-    }}>
+          <div  >
               <BroadbandForm currentId_broadband={currentId_broadband} setCurrentId_broadband={setCurrentId_broadband} /> 
               </div>
             </>
@@ -151,43 +225,8 @@ function Broadband() {
                 :    <> 
                 <div><span  STYLE="color:black;font-weight:600;font-size:38px">BROADBAND PLANS</span></div>
                 <Line color="#3f51b5"/> 
-                <Grid className={classes.container} style={{marginRight:"5px"}} container alignItems="stretch" spacing={3}>
-                <Grid item xs={12} sm={6} md={4}>
-                <Card  className={classes.card}  elevation={elevated}  
-          onMouseOver={() => setElevated(10)} 
-          onMouseOut={() => setElevated(2)} >
-            <CardMedia className={classes.media} image={pic4}/>
-            <CardContent>
-            Telstra Smart Modem targets your devices with a concentrated signal. And switches to 4G in an outage. Included for new customers. 4G coverage required. 4G speeds capped at 25/2 Mbps. Actual speeds may be lower
-            </CardContent>
-          </Card>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                <Card  className={classes.card}  elevation={elevated}  
-          onMouseOver={() => setElevated(10)} 
-          onMouseOut={() => setElevated(2)} >
-            <CardMedia className={classes.media} image={pic5}/>
-            <CardContent>
-            Home phone service
-+ unlimited standard Australian mobile calls + 100 GBs of Data Consumption
-Our internet plans come with a home phone service included. Plus unlimited calls to standard Australian mobiles.
-            </CardContent>
-          </Card>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                <Card  className={classes.card}  elevation={elevated}  
-          onMouseOver={() => setElevated(10)} 
-          onMouseOut={() => setElevated(2)} >
-            <CardMedia className={classes.media} image={pic6}/>
-            <CardContent>
-            Broadband Protect
-Cyber threat protection for your family
-With parental controls, social network protection and device protection to help keep everyone at home safe online.
-Ability to stream movies, play games and lots more
-            </CardContent>
-          </Card>
-                </Grid>
-                </Grid></> 
+                <ImageSlider/>
+               </> 
              }</> 
           }
           </>

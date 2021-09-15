@@ -5,24 +5,25 @@ import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles((theme) => ({
     toTop: {
-        zIndex: 2,
+        zIndex: 10,
         position: 'fixed',
         bottom: '2vh',
         marginBottom:"20px",
+        right:"44px",
 
-        backgroundColor: '##3f51b5',
-        color: 'black',
+        backgroundColor: '#3f51b5',
+        color: 'white',
         "&:hover, &.Mui-focusVisible": {
             transition: '0.3s',
-            color: '#397BA6',
-            backgroundColor: '#DCDCDC'
+            color: 'white',
+            backgroundColor: '#003d80'
         },
         [theme.breakpoints.up('xs')]: {
-            right: '3%',
-            backgroundColor: 'rgb(220,220,220,0.7)',
+            
+            backgroundColor: '#3f51b5'
         },
         [theme.breakpoints.up('lg')]: {
-            right: '3.5%',
+          
         },
     }
 })

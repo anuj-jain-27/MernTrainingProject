@@ -4,6 +4,7 @@ import Line from "../../Line"
 import useStyles from './styles';
 import { jsPDF } from "jspdf";
 import { useState } from 'react';
+import axios from 'axios';
 
 const Plan = ({ plan}) => {
   console.log(plan.id)
@@ -30,6 +31,25 @@ const Plan = ({ plan}) => {
    const handleDownload = () => {
      doc.save("MobileInvoice.pdf");
    };
+   const [sent, setSent]=useState(false);
+   const handleMEmail = () => {
+    const dataToSubmit={
+      name: profile?.user?.name,
+      email: profile?.user?.email,
+      amount:plan?.cost,
+      plantype:plan?.status,
+      paymentstatus:plan?.validity,
+      }
+  
+       axios.post('/mail', dataToSubmit)
+       .then(res=>{
+       setSent(true)
+       })
+       .catch(()=>{
+         console.log("message not sent")
+      })
+    
+  };
  
    const [elevated, setElevated]=useState(2);
   return (
@@ -51,6 +71,9 @@ const Plan = ({ plan}) => {
         <Typography variant="body2" color="textSecondary" component="p">SMS - {plan.SMS}/ Day</Typography>
         <Button type="button" style={{marginTop:"10px"}} className={classes.buttonSubmit} variant="contained" color="primary" size="small" onClick={handleDownload}>
           Download Invoice
+      </Button>
+      <Button type="button" style={{marginTop:"10px", fontsize:"10px"}} className={classes.buttonSubmit} variant="contained" color="primary" size="small" onClick={handleMEmail}>
+           transaction mail
       </Button>
       </CardContent>
     </Card>

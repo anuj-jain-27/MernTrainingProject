@@ -3,6 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const nodemailer = require('nodemailer');
+const smtpTransport= require('nodemailer-smtp-transport');
 const passport = require('passport')
 const authRoutes = require("./routes/auth")
 const userRoutes = require("./routes/user")
@@ -20,8 +22,33 @@ const searchroutes=require("./routes/search")
 
 const app = express();
 
+app.post('/mail',(req,res)=>{
+    let data=req.body
+    console.log(data)
+    const transporter = nodemailer.createTransport(smtpTransport ({
+     service:"gmail",
+     auth:{
+         user:"myportal0205@gmail.com",
+         pass:"Node&React"
+     }
+ }));
 
-
+ var mailOptions = {
+    from: 'myportal0205@gmail.com',
+    to: 'anushamadan02@gmail.com',
+    subject: 'Sending Email using Node.js',
+    text: 'That was easy!'
+  };
+  
+ transporter.sendMail(mailOptions, function(err, info){
+     if(err){
+         console.log(err)
+         return;
+     }
+     console.log("Sent:" + info.response)
+ })
+ 
+ })
 /*mongoose.connect('mongodb+srv://AnushaMadan:Madan1204@cluster0.k0byf.mongodb.net/TrainingProject?retryWrites=true&w=majority', {
     useNewUrlParser: true, 
     useUnifiedTopology: true, 

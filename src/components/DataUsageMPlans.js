@@ -20,6 +20,10 @@ import IconButton from '@material-ui/core/IconButton';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Plan from './Posts/Post/Plan';
 import Line from "./Line"
+import { CircularProgressbar, buildStyles  } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { easeQuadInOut } from "d3-ease";
+import AnimatedProgressProvider from "./AnimatedProgressProvider";
 
 const useStyles_1 = makeStyles((theme) => ({
   formControl: {
@@ -98,6 +102,8 @@ function Mobile() {
   const classes = useStyles();
   const [elevated, setElevated]=useState(2);
 
+  console.log(Math.round((datas[datas.length-1]?.dc /2)*100).toFixed(2))
+  const percentage= Math.round((datas[datas.length-2]?.dc /2)*100).toFixed(2)
 
     return (
      ( datas.length ==0 ?<CircularProgress />:
@@ -108,8 +114,38 @@ function Mobile() {
             <Grid container style={{marginTop:"10px"}} justify="space-between" alignItems="stretch" spacing={3}>
             <Card style={{marginBottom:"10px", width:"320px"}} className={classes.card} elevation={elevated}  onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)}  variant="outlined">
               <CardContent>
-                <Typography className={classes.title} color="textSecondary" gutterBottom>
-                 DATA USAGE TODAY : {datas[datas.length-1].dc}/ 2 GB
+              <Grid container alignItems="stretch" spacing={3}>
+                <Grid  item xs={12} sm={6} md={6}>
+                <AnimatedProgressProvider
+                  valueStart={0}
+                  valueEnd={percentage}
+                  duration={1.4}
+                  easingFunction={easeQuadInOut}
+                >
+                  {(value) => {
+                    const roundedValue = Math.round(value)
+                    return (
+                      <CircularProgressbar
+                        value={value}
+                        text={`${roundedValue}%`}
+
+                        styles={buildStyles({ pathTransition: 'none',  textColor: "black",
+                        pathColor: "#203354" ,
+                        trailColor:  "#8cd2e8"})}
+                      />
+                    )
+                  }}
+                </AnimatedProgressProvider>
+                </Grid>
+                <Grid  item xs={12} sm={6} md={6}>
+                <Typography style={{marginTop:"10px"}} className={classes.title} color="textSecondary" gutterBottom> Last 3 Days consumption</Typography>
+      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 16-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-1].dc} GB</span></div>
+      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 15-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-2].dc} GB</span></div>
+      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 14-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-3].dc} GB</span></div>
+                </Grid>
+                </Grid>
+                <Typography style={{marginBottom:"10px"}}className={classes.title} color="textSecondary" gutterBottom>
+                 DATA USAGE TODAY : {datas[datas.length-2].dc}/ 2 GB
                 </Typography>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                 </Typography>
@@ -148,7 +184,7 @@ function Mobile() {
       </div>
       <div>
       </div>
-      <FormControl className={classes.formControl_1}>
+      <FormControl style={{marginBottom:"10px"}} className={classes.formControl_1}>
         <InputLabel shrink htmlFor="age-native-label-placeholder">
           End Date
         </InputLabel>
@@ -178,11 +214,8 @@ function Mobile() {
       </FormControl>
       </div>
       DATA CONSUMPTION : {Total_Consumption}
-      <Line color="#3f51b5"/>
-      <Typography style={{marginTop:"10px"}} className={classes.title} color="textSecondary" gutterBottom> Last 3 Days consumption</Typography>
-      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 16-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-1].dc} GB</span></div>
-      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 15-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-2].dc} GB</span></div>
-      <div><span  STYLE="color:grey;font-weight:600;font-size:14px"> 14-8-2021:  </span><span  STYLE="font-size:13px">{datas[datas.length-3].dc} GB</span></div>
+      {/* <Line color="#3f51b5"/> */}
+      
       </div>
         </CardContent>
         <CardActions>

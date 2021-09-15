@@ -61,7 +61,8 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
   const [currentBplan, setCurrentBplan] = useState(0);
   const [currentId_broadband, setCurrentId_broadband] = useState(0);
   const [rows, setRows]= useState({});
-  const [clicked, setClicked] = useState(null)
+  const [clicked, setClicked] = useState(null);
+  const [clickedrenew, setClickedRenew] = useState(null)
 
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
@@ -113,16 +114,18 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
 
   const [open, setOpen] = React.useState(false);
   const [displaybroadband, setDisplayBroadband] = React.useState({});
-  
+  const [openr, setOpenRenew] = React.useState(false);
 
   const handleOpen = () => {
     setOpen(true);
   };
+ 
 
   const handleClose = () => {
     setOpen(false);
     setClicked(false)
   };
+
   //Clicked turns on for payment for upgrade
   const openPayment = () => {
     setClicked(true)
@@ -139,10 +142,27 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
   if (rows?._id != null){
     localStorage.setItem('broadband',JSON.stringify(rows))
    }
-  console.log(currentbroadband[currentbroadband.length-1])
+  console.log(currentbroadband)
   const [elevated, setElevated]=useState(2);
-  console.log(currentbroadband[0])
+  console.log(currentbroadband[0]?.productId)
 
+  const handleRenew= () => {
+    for (var l=0;   l<broadbands.length; l++){
+      if(currentbroadband[0].productId==broadbands[l]._id){
+        localStorage.setItem('broadband',JSON.stringify(broadbands[l]))
+        setClickedRenew(true)
+      }}
+
+    setOpenRenew(true)
+   };
+   console.log(clickedrenew)
+   const handleCloseRenew = () => {
+    setClickedRenew(false)
+    localStorage.removeItem('broadband')
+    setOpenRenew(false);
+
+  };
+  console.log(clickedrenew)
     return (
      ( datas.length ==0 || broadbands.length ==0 || currentbroadband.length==0?<></>:
       <>
@@ -150,7 +170,7 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
         <Grow in>
           <Container>
         <Grid container  justify="space-between" alignItems="stretch" spacing={3}>
-        <Card className={classes.root} style={{marginBottom:"5px"}}  elevation={elevated}   onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)} variant="outlined">
+        <Card className={classes.card} style={{marginBottom:"5px", width:"300px"}}  elevation={elevated}   onMouseOver={() => setElevated(10)} onMouseOut={() => setElevated(2)} variant="outlined">
         <CardContent>
         <div style={{padding:"10px", backgroundColor:"#8cd2e8"}}>
         <Typography style={{ fontWeight:"fontWeightBold"}} className={classes.title} color="textSecondary" gutterBottom>
@@ -169,9 +189,14 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
         <Typography className={classes.title} color="textSecondary" gutterBottom>
         </Typography>
         {currentbroadband.length!=2?<>
-         <Button type="button"  className={classes.buttonSubmit} variant="contained" color="primary" fullWidth onClick={handleOpen}>
-          UPGRADE PLAN
+        <div style={{ display: "flex", justifycontent:"space-around"}}  >
+         <Button type="button" style={{ margin:"10px"}}  className={classes.buttonSubmit} variant="contained" color="primary" onClick={handleOpen}>
+          UPGRADE 
       </Button>
+       <Button type="button"  style={{ margin:"10px"}} className={classes.buttonSubmit} variant="contained" color="primary"  onClick={handleRenew}>
+         RENEW
+      </Button>
+      </div>
          <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -187,7 +212,7 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
         <Fade in={open}>
           <div>
         <Button style={{ marginLeft: "auto"}} className={classes.logButton} endIcon={<CloseIcon />}  variant="contained" color="pink" size="small" fontSize="small" onClick={handleClose}>Close</Button>
-          {clicked?<><PaymentModal clicked={clicked} /> <Button type="button"  style={{right:"100px", top:"180px"}} className={classes.buttonSubmit}  variant="contained" color="primary" onClick={openUpgrade} >
+          {clicked?<><PaymentModal clicked={clicked} clickedrenew={clickedrenew}  /> <Button type="button"   className={classes.buttonSubmit}  variant="contained" color="primary" onClick={openUpgrade} >
             Back
            </Button></> :
           <div class="wrapperone"><div className={classes_1.paper}>
@@ -200,6 +225,28 @@ function BroadbandCurrent( BUpgrade, setBUpgrade) {
          </div>
         </Fade>
       </Modal>
+
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        className={classes_1.modal}
+        open={openr}
+        onClose={handleCloseRenew}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openr}>
+          <div>
+        <Button style={{ marginLeft: "auto"}} className={classes.logButton} endIcon={<CloseIcon />}  variant="contained" color="pink" size="small" fontSize="small" onClick={handleCloseRenew}>Close</Button>
+        <PaymentModal clicked={clicked} clickedrenew={clickedrenew}/>
+         </div>
+        </Fade>
+      </Modal>
+
+     
          
          </>:<></>}
         </CardContent>

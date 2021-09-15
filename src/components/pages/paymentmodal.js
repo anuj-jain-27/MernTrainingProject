@@ -74,7 +74,7 @@ const BootstrapButton = withStyles({
       padding: theme.spacing(2, 4, 3),
     },
   }));
-function PaymentModal(clicked) {
+function PaymentModal(clicked, clickedrenew) {
     const dispatch = useDispatch();
     console.log(window.innerWidth )
     const classes = useStyles();
@@ -103,9 +103,9 @@ function PaymentModal(clicked) {
     console.log("M is clicked")
     setMWarning(true)
   };
-
+  
+  console.log(clicked)
     return (
-
       <div class="wrapper">
           <div className={classes_2.paper} >
       <FormControl component="fieldset">
@@ -116,7 +116,7 @@ function PaymentModal(clicked) {
       </FormControl>
       <Grid container  justify="space-between" alignItems="Top" >
               <Grid item xs={6} sm={6}>
-              {value==="add"? <PaymentForm/>: <PaymentForm_1 clicked={clicked} /> }
+              {value==="add"? <PaymentForm/>: <PaymentForm_1 clicked={clicked} clickedrenew={clickedrenew}/> }
               {broadband!=null?<><Button type="button" style={{marginTop:"10px" , width:"250px"}} size="small" className={classes.buttonSubmit} variant="contained" color="primary"  onClick={handleRemoveBroadband}>
           Remove Broadband plan
       </Button></>:<></>}
@@ -128,12 +128,12 @@ function PaymentModal(clicked) {
               <Grid style={{marginLeft:"5px"}}item xs={6} sm={5}>
   <Card style={{ width:"230px", justifyContent:"start"}}>
   <div style={{justifyContent:"center", textAlign:"center", marginBottom:"20px"}}>
-  <Typography style={{justifyContent:"center", color:"blue"}} variant="h8">Plans Selected</Typography></div>
+  <Typography style={{justifyContent:"center", color:"#203354"}} variant="h8">Plans Selected</Typography></div>
      
               {
       plansMobile != null && mwarn===false ?<>
-      <Card style={{height:"170px", width:"200px", marginLeft: "20px"}}  >
-      <Typography  style={{marginLeft:"10px", marginTop:"10px", color:"blue"}} variant="h8">MOBILE PLAN</Typography>
+      <Card style={{height:"170px", width:"200px", marginBottom:"10px", marginLeft: "20px"}}  >
+      <Typography  style={{marginLeft:"10px", marginTop:"10px", color:"#203354"}} variant="h8">MOBILE PLAN</Typography>
       <CardContent >
       <div><span  STYLE="color:grey;font-weight:600;font-size:14px">PLAN: </span><span  STYLE="font-size:13px">{plansMobile?.plan}</span></div>
       <div><span  STYLE="color:grey;font-weight:600;font-size:14px">VALIDITY: </span><span  STYLE="font-size:13px">{plansMobile?.validity}</span></div>
@@ -148,7 +148,7 @@ function PaymentModal(clicked) {
 {
        broadband !=null  && bwarn===false?<>
       <Card style={{height:"170px", width:"200px", marginTop:"20px",  marginBottom:"20px", marginLeft: "20px"}} >
-      <Typography style={{marginLeft:"10px",  marginTop:"10px", color:"blue"}} variant="h8">BROADBAND PLAN</Typography>
+      <Typography style={{marginLeft:"10px",  marginTop:"10px", color:"#203354"}} variant="h8">BROADBAND PLAN</Typography>
       <CardContent >
       <div><span  STYLE="color:grey;font-weight:600;font-size:14px">PLAN: </span><span  STYLE="font-size:13px">{broadband?.name}</span></div>
       <div><span  STYLE="color:grey;font-weight:600;font-size:14px">VALIDITY: </span><span  STYLE="font-size:13px">{broadband?.validity}</span></div>
@@ -159,6 +159,8 @@ function PaymentModal(clicked) {
       </Card>
     </>:<></>
       }
+      
+      
      </Card>
               </Grid>
             </Grid>
